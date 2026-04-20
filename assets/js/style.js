@@ -266,13 +266,13 @@ if (propertyCards.length > 0) {
 	filtersClearBtn?.addEventListener('click', () => {
 		collapseFiltersPanel();
 		triggerPanelAnimation();
-		showFeedback('Filtres tkhbaw.');
+		
 	});
 
 	filtersShowBtn?.addEventListener('click', () => {
 		expandFiltersPanel();
 		triggerPanelAnimation();
-		showFeedback('Filtres rj3o.');
+		
 	});
 
 	applyFilters();
