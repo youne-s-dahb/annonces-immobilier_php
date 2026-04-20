@@ -52,7 +52,7 @@
 				</div>
 			</div>
 
-			<a class="results-btn" href="#">Voir <span id="results-count"><?php echo count($lesAnnonces); ?></span> annonces</a>
+			<a class="results-btn" href="#">Voir  <span id="results-count"><?php echo count($lesAnnonces); ?></span> annonces</a>
 		</aside>
 
 		<section class="results-panel" aria-label="Resultats annonces">
