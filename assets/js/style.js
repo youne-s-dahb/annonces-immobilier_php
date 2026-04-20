@@ -123,6 +123,7 @@ customSelects.forEach((customSelect) => {
 
 const filtersPanel = document.querySelector('.filters-panel');
 const listingLayout = document.querySelector('.listing-layout');
+const filtersForm = document.getElementById('filters-form');
 const filtersClearBtn = document.getElementById('filters-clear-btn');
 const filtersShowBtn = document.getElementById('filters-show-btn');
 const filterFeedback = document.getElementById('filter-feedback');
@@ -135,6 +136,29 @@ const minPriceInput = document.getElementById('prix-min');
 const maxPriceInput = document.getElementById('prix-max');
 const typeChips = Array.from(document.querySelectorAll('.js-type-chip'));
 const propertyCards = Array.from(document.querySelectorAll('.property-card[data-ville]'));
+
+if (filtersForm && minPriceInput && maxPriceInput) {
+	filtersForm.addEventListener('submit', (event) => {
+		const minValue = Number.parseInt(minPriceInput.value || '', 10);
+		const maxValue = Number.parseInt(maxPriceInput.value || '', 10);
+
+		if (Number.isNaN(minValue) || Number.isNaN(maxValue)) {
+			event.preventDefault();
+			if (filterFeedback) {
+				filterFeedback.classList.add('is-visible');
+			}
+			return;
+		}
+
+		if (maxValue < minValue) {
+			event.preventDefault();
+			if (filterFeedback) {
+				filterFeedback.textContent = 'Prix max khaso ykoun akbar mn prix min.';
+				filterFeedback.classList.add('is-visible');
+			}
+		}
+	});
+}
 
 if (propertyCards.length > 0) {
 	const normalize = (value) => (value || '').toString().trim().toLowerCase();
@@ -273,6 +297,29 @@ if (propertyCards.length > 0) {
 		expandFiltersPanel();
 		triggerPanelAnimation();
 		
+	});
+
+	const mediaNavButtons = Array.from(document.querySelectorAll('.js-media-prev, .js-media-next'));
+
+	mediaNavButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			const galleryId = button.getAttribute('data-gallery-id') || '';
+			if (galleryId === '') {
+				return;
+			}
+
+			const gallery = document.getElementById(galleryId);
+			if (!gallery) {
+				return;
+			}
+
+			const direction = button.classList.contains('js-media-next') ? 1 : -1;
+			const step = gallery.clientWidth;
+			gallery.scrollBy({
+				left: step * direction,
+				behavior: 'smooth',
+			});
+		});
 	});
 
 	applyFilters();
