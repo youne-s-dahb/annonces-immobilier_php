@@ -179,6 +179,12 @@ input {
 	grid-template-columns: 340px 1fr;
 	gap: 18px;
 	align-items: start;
+	transition: grid-template-columns 260ms ease, gap 260ms ease;
+}
+
+.listing-layout.filters-collapsed {
+	grid-template-columns: 0 1fr;
+	gap: 0;
 }
 
 .filters-panel {
@@ -189,6 +195,18 @@ input {
 	border-radius: var(--radius-xl);
 	padding: 16px;
 	box-shadow: var(--shadow-sm);
+	transition: opacity 220ms ease, transform 220ms ease, max-width 220ms ease, padding 220ms ease, border-width 220ms ease;
+}
+
+.listing-layout.filters-collapsed .filters-panel {
+	opacity: 0;
+	transform: translateX(-14px);
+	pointer-events: none;
+	max-width: 0;
+	overflow: hidden;
+	padding-left: 0;
+	padding-right: 0;
+	border-width: 0;
 }
 
 .filter-head {
@@ -196,6 +214,11 @@ input {
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 12px;
+}
+
+.filter-head-actions {
+	display: inline-flex;
+	gap: 8px;
 }
 
 .filter-head h2 {
@@ -207,6 +230,51 @@ input {
 	background: transparent;
 	color: var(--text-soft);
 	cursor: pointer;
+}
+
+.filter-clear-btn,
+.filter-undo-btn {
+	border: 1px solid var(--line);
+	background: #fff;
+	color: #6e6357;
+	padding: 7px 10px;
+	border-radius: 9px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.filter-clear-btn:hover,
+.filter-undo-btn:hover {
+	transform: translateY(-1px);
+	border-color: var(--line-strong);
+	box-shadow: 0 8px 14px rgba(46, 40, 32, 0.08);
+}
+
+.filter-undo-btn {
+	background: linear-gradient(130deg, rgba(122, 155, 118, 0.16), rgba(176, 137, 104, 0.18));
+	color: #3b4f39;
+	border-color: rgba(122, 155, 118, 0.35);
+}
+
+.filter-feedback {
+	min-height: 18px;
+	font-size: 0.76rem;
+	font-weight: 600;
+	color: var(--primary-dark);
+	margin: -2px 0 6px;
+	opacity: 0;
+	transform: translateY(-4px);
+	transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.filter-feedback.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.filters-panel.is-resetting {
+	animation: filterPulse 320ms ease;
 }
 
 .search-box {
@@ -418,6 +486,13 @@ input {
 	background: #f4faf4;
 }
 
+.chip.is-active {
+	border-color: rgba(122, 155, 118, 0.65);
+	background: linear-gradient(130deg, rgba(122, 155, 118, 0.22), rgba(176, 137, 104, 0.18));
+	color: #3b4f39;
+	font-weight: 700;
+}
+
 .chips-compact .chip {
 	padding-inline: 10px;
 	min-width: 42px;
@@ -479,6 +554,28 @@ input {
 	cursor: pointer;
 }
 
+.results-head-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.show-filters-btn {
+	border: 1px solid rgba(122, 155, 118, 0.35);
+	background: linear-gradient(130deg, rgba(122, 155, 118, 0.16), rgba(176, 137, 104, 0.18));
+	color: #384b36;
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.show-filters-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 14px rgba(46, 40, 32, 0.1);
+}
+
 .cards-grid {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -494,6 +591,10 @@ input {
 	flex-direction: column;
 	height: 100%;
 	transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.property-card.card-appear {
+	animation: cardAppear 260ms ease;
 }
 
 .property-card:hover {
@@ -769,6 +870,23 @@ input {
 	background: linear-gradient(145deg, #2f2a24 0%, #3c352e 40%, #4b4034 100%);
 	color: #f7f2ea;
 	overflow: hidden;
+}
+
+@keyframes filterPulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.01); }
+	100% { transform: scale(1); }
+}
+
+@keyframes cardAppear {
+	0% {
+		opacity: 0;
+		transform: translateY(6px) scale(0.99);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
 }
 
 .site-footer::before,
