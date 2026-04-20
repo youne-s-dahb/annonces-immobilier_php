@@ -5,9 +5,9 @@
 	<div class="container listing-layout">
 		<aside class="filters-panel" aria-label="Filtres de recherche">
 			<div class="filter-head">
-				<h2>Filtres</h2>
+				<h2>Filtrer</h2>
 				<div class="filter-head-actions">
-					<button type="button" class="filter-clear-btn" id="filters-clear-btn">Effacer</button>
+					<button type="button" class="filter-clear-btn" id="filters-clear-btn">Cacher</button>
 				</div>
 			</div>
 			<p class="filter-feedback" id="filter-feedback" aria-live="polite"></p>
