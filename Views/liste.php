@@ -1,9 +1,5 @@
 <?php include(__DIR__."/header.php"); ?>
-<?php
-if (!isset($lesAnnonces) || !is_array($lesAnnonces)) {
-	$lesAnnonces = [];
-}
-?>
+
 
 <main class="page-shell">
 	<div class="container listing-layout">
@@ -19,25 +15,29 @@ if (!isset($lesAnnonces) || !is_array($lesAnnonces)) {
 
 			<div class="filter-group">
 				<p>Categorie</p>
-				<select class="select-btn" name="categorie">
-					<option value="">Toutes les categories</option>
+				<select class="select-btn select-fancy" name="categorie" id="categorie-select-native">
+					<option value="" disabled selected>Choisir categorie</option>
 					<?php foreach ($categories as $categorie): ?>
-						<option value="<?php echo htmlspecialchars($categorie); ?>"><?php echo htmlspecialchars($categorie); ?></option>
+						<option value="<?php echo htmlspecialchars($categorie["Categorie"]); ?>"><?php echo htmlspecialchars($categorie["Categorie"]); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
 
 			<div class="filter-group">
 				<p>Ville - Secteur</p>
-				<button type="button" class="select-btn">Choisir ville - secteur</button>
+				<select name="ville" id="ville-select-native" class="select-btn select-fancy">
+					<option value="" disabled selected>Choisir ville</option>
+					<?php foreach ($ville as $vil): ?>
+						<option value="<?php echo htmlspecialchars($vil["nom_ville"]); ?>"><?php echo htmlspecialchars($vil["nom_ville"]); ?></option>
+					<?php endforeach; ?>
+				</select>
 			</div>
 
 			<div class="filter-group">
-				<p>Type d'appartement</p>
+				<p>Type </p>
 				<div class="chips">
-					<button type="button" class="chip">Studio</button>
-					<button type="button" class="chip">Duplex</button>
-					<button type="button" class="chip">Penthouse</button>
+					<button type="button" class="chip">Location</button>
+					<button type="button" class="chip">Vente</button>
 				</div>
 			</div>
 
@@ -65,8 +65,6 @@ if (!isset($lesAnnonces) || !is_array($lesAnnonces)) {
 				<?php if (count($lesAnnonces) === 0): ?>
 					<article class="property-card">
 						<div class="card-body">
-							<p class="location">Aucune annonce trouvee</p>
-							<h3>Ajoutez des annonces pour les afficher ici.</h3>
 						</div>
 					</article>
 				<?php else: ?>
@@ -83,6 +81,7 @@ if (!isset($lesAnnonces) || !is_array($lesAnnonces)) {
                                 $NomCategorie     = $annonce['Categorie'] ?? '-';
                                 $Nomuser         = $annonce['Nom'] ?? '-';
                                 $Prenomuser      = $annonce['Prenom'] ?? '-';
+								$urlImage			 =$annonce["url_image"];
 							$dateAffiche = $datePublication;
 							$timestamp = strtotime((string) $datePublication);
 							if ($timestamp !== false) {
@@ -96,6 +95,7 @@ if (!isset($lesAnnonces) || !is_array($lesAnnonces)) {
 						?>
 						<article class="property-card">
 							<div class="card-media media-<?php echo $mediaIndex; ?>">
+								<img src="<?=$urlImage?>" alt="">
 							</div>
 							<div class="card-body">
 								<div class="card-publish-row">
