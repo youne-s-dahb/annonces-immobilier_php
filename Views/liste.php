@@ -6,8 +6,11 @@
 		<aside class="filters-panel" aria-label="Filtres de recherche">
 			<div class="filter-head">
 				<h2>Filtres</h2>
-				<button type="button">Effacer</button>
+				<div class="filter-head-actions">
+					<button type="button" class="filter-clear-btn" id="filters-clear-btn">Effacer</button>
+				</div>
 			</div>
+			<p class="filter-feedback" id="filter-feedback" aria-live="polite"></p>
 
 			<label class="search-box" for="recherche">
 				<input id="recherche" type="text" placeholder="Que recherchez-vous ?">
@@ -36,20 +39,20 @@
 			<div class="filter-group">
 				<p>Type </p>
 				<div class="chips">
-					<button type="button" class="chip">Location</button>
-					<button type="button" class="chip">Vente</button>
+					<button type="button" class="chip js-type-chip" data-type="location" aria-pressed="false">Location</button>
+					<button type="button" class="chip js-type-chip" data-type="vente" aria-pressed="false">Vente</button>
 				</div>
 			</div>
 
 			<div class="filter-group">
 				<p>Prix</p>
 				<div class="price-inputs">
-					<input type="text" placeholder="Min">
-					<input type="text" placeholder="Max">
+					<input id="prix-min" type="text" inputmode="numeric" placeholder="Min">
+					<input id="prix-max" type="text" inputmode="numeric" placeholder="Max">
 				</div>
 			</div>
 
-			<a class="results-btn" href="#">Voir <?php echo count($lesAnnonces); ?> annonces</a>
+			<a class="results-btn" href="#">Voir <span id="results-count"><?php echo count($lesAnnonces); ?></span> annonces</a>
 		</aside>
 
 		<section class="results-panel" aria-label="Resultats annonces">
@@ -58,7 +61,10 @@
 					<h1>Biens immobiliers disponibles</h1>
 					<p>Selection soignee pour un confort de navigation optimal.</p>
 				</div>
-				<button type="button" class="sort-btn">Tri : Plus recents</button>
+				<div class="results-head-actions">
+					<button type="button" class="show-filters-btn" id="filters-show-btn" hidden>Afficher filtres</button>
+					<button type="button" class="sort-btn">Tri : Plus recents</button>
+				</div>
 			</div>
 
 			<div class="cards-grid">
@@ -93,7 +99,15 @@
 							}
 							$ownerInitial = strtoupper(substr($ownerName, 0, 1));
 						?>
-						<article class="property-card">
+						<article
+							class="property-card"
+							data-title="<?php echo htmlspecialchars(strtolower((string) $titre)); ?>"
+							data-description="<?php echo htmlspecialchars(strtolower((string) $description)); ?>"
+							data-ville="<?php echo htmlspecialchars(strtolower((string) $NomVille)); ?>"
+							data-categorie="<?php echo htmlspecialchars(strtolower((string) $NomCategorie)); ?>"
+							data-type="<?php echo htmlspecialchars(strtolower((string) $type)); ?>"
+							data-prix="<?php echo htmlspecialchars((string) $prix); ?>"
+						>
 							<div class="card-media media-<?php echo $mediaIndex; ?>">
 								<img src="<?=$urlImage?>" alt="">
 							</div>
