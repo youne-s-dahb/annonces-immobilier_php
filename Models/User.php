@@ -33,8 +33,14 @@
             if(strlen($password) < 8){
                 $errors[] = "Minimum 8 caractères!!";
             }
-            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]).+$/', $password)) {
-                $errors[] = 'Le mot de passe doit contenir : minuscule, majuscule, chiffre et caractère spécial';
+            if(!preg_match('/[a-z]/', $password)){
+                $errors[] = "Le mot de passe doit contenir minimum une lettre miniscule!!";
+            }
+            if(!preg_match('/[A-Z]/', $password)){
+                $errors[] = "Le mot de passe doit contenir minimum une lettre majuscule!!";
+            }
+            if(!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $password)){
+                $errors[] = "Le mot de passe doit contenir au moin un caractère speciale(!@#$%^&*...)";
             }
         }
         
