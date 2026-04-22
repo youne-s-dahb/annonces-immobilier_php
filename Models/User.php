@@ -34,7 +34,7 @@
                 $errors[] = "Minimum 8 caractères!!";
             }
             if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]).+$/', $password)) {
-                $errors[] = '❌ Mot de passe doit contenir : minuscule, majuscule, chiffre et caractère spécial';
+                $errors[] = 'Le mot de passe doit contenir : minuscule, majuscule, chiffre et caractère spécial';
             }
         }
         
