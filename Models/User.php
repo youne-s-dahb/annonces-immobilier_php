@@ -42,6 +42,27 @@
             if(!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $password)){
                 $errors[] = "Le mot de passe doit contenir au moin un caractère speciale(!@#$%^&*...)";
             }
+            if(!empty($errors)){
+                return['valid'=>false, 'errors'=>$errors];
+            }
+            return ['valid'=> true];
+        }
+
+        //-----------------------------------------------
+        //validation nom et prenom
+
+        public function validName($name){
+            $name = trim($name);
+            $taille = strlen($name);
+
+            if ($taille < 3 || $taille > 30 || !preg_match('/^[a-zA-ZÀ-ÿ\s\-\' ]+$/', $name)) {
+                return [
+                    'valid' => false,
+                    'message' => 'Nom invalide (3-30 caractères, lettres et espaces uniquement)'
+                ];
+            }
+            return ['valid' => true];
+                        
         }
         
     }
