@@ -26,12 +26,12 @@ class annonces{
     }
 
     public function allCategorie(){
-            $sql="SELECT Categorie FROM categorie";
+            $sql="SELECT * FROM categorie";
             $stmt=$this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function allVille(){
-        $sql="SELECT nom_ville FROM ville";
+        $sql="SELECT * FROM ville";
         $stmt=$this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -63,10 +63,34 @@ class annonces{
             }
         }
     }
-    public function publier_annonce(){
-        
+    public function publier_annonce($data){//heya post 
+        $date=new DateTime("now", new DateTimeZone("Africa/Casablanca"));
+        $date_pub=$date->format("Y-m-d H:i:s");
+        $titre       = $data["titre"] ?? "Sans titre"; 
+        $type        = $data["type"] ?? "";
+        $telephone   = $data["telephone"] ?? "";
+        $description = $data["description"] ?? "";
+        $prix        = $data["prix"] ?? 0;
+        $id_categorie = $data["categorie"] ?? null;
+        $id_ville     = $data["ville"] ?? null;
+       
+        $sql="INSERT INTO `annonce` (Titre,Description,Prix,Telephone,Type,Date_Publication,id_user,id_ville,id_categorie)
+              VALUES (?,?,?,?,?,?,?,?,?)
+            ";
+        $stmt=$this->db->prepare($sql);
+
+        $stmt->execute([
+                $titre,$description,$prix,$telephone,$type,$date_pub,10,$id_ville,$id_categorie
+        ]);     
+        return $this->db->lastInsertId();// return id dyal had annonces 
+    }
+    public function publier_image($url,$id_annonce){
+        $sql ="INSERT INTO `image` (url_image,id_annonce) VALUES (?,?)";
+        $stmt=$this->db->prepare($sql);
+        return $stmt->execute([$url,$id_annonce]);
     }
 
+   
 
 }
 

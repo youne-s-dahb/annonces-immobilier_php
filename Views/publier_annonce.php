@@ -10,7 +10,7 @@ include(__DIR__."/header.php");
     <link rel="stylesheet" href="/annonces_immobilier/assets/css/publier_annonce.css">
 </head>
 <body>
-    
+
         <main class="pa-page" aria-label="Page publier annonce">
             <div class="container pa-layout">
                 <section class="pa-intro" aria-label="Introduction publication">
@@ -32,10 +32,10 @@ include(__DIR__."/header.php");
                         <p>Remplis les champs ci-dessous.</p>
                     </div>
 
-                    <form class="pa-form" action="" method="POST" enctype="multipart/form-data" id="publish-form" novalidate>
+                    <form class="pa-form" action="../Controlles/AnnoncesCtrl.php?action=save" method="POST" enctype="multipart/form-data" id="publish-form" novalidate>
                         <div class="pa-field">
                             <label for="publish-images">Images</label>
-                            <input id="publish-images" type="file" name="image" accept="image/*" multiple>
+                            <input id="publish-images" type="file" name="image[]" accept="image/*" multiple>
                             <small id="images-feedback" class="pa-help">Aucun fichier selectionne</small>
                             <div id="images-preview" class="pa-preview-grid" aria-live="polite"></div>
                         </div>
@@ -62,6 +62,11 @@ include(__DIR__."/header.php");
                         </div>
 
                         <div class="pa-field">
+                            <label for="publish-price">Prix (DH)</label>
+                            <input id="publish-price" type="number" name="prix" min="0" placeholder="Ex: 750000" required>
+                        </div>
+
+                        <div class="pa-field">
                             <label for="publish-description">Description</label>
                             <textarea id="publish-description" name="description" rows="5" maxlength="500" placeholder="Decris ton bien immobilier..." required></textarea>
                             <small id="description-count" class="pa-help">0 / 500</small>
@@ -73,7 +78,7 @@ include(__DIR__."/header.php");
                                 <select id="publish-city" name="ville" required>
                                     <option value="" disabled selected>Choisir ville</option>
                                     <?php foreach ($ville as $vil): ?>
-                                        <option value="<?php echo htmlspecialchars($vil['nom_ville']); ?>"><?php echo htmlspecialchars($vil['nom_ville']); ?></option>
+                                        <option value="<?php echo $vil['id_ville']; ?>"><?php echo htmlspecialchars($vil['nom_ville']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -83,7 +88,7 @@ include(__DIR__."/header.php");
                                 <select id="publish-category" name="categorie" required>
                                     <option value="" disabled selected>Choisir categorie</option>
                                     <?php foreach ($categories as $cat): ?>
-                                        <option value="<?php echo htmlspecialchars($cat['Categorie']); ?>"><?php echo htmlspecialchars($cat['Categorie']); ?></option>
+                                        <option value="<?php echo $cat['id_categorie']; ?>"><?php echo htmlspecialchars($cat['Categorie']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
