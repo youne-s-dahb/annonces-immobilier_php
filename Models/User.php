@@ -181,6 +181,20 @@
             }
         }
 
+        //gestion users: recuperer user pas id et les retun sous forme de array
+
+        public function getUserById($id){
+            try{
+
+                $stmt = $this->db->prepare("SELECT * FROM user WHERE id_user = ?");
+                $stmt->execute([$id]);
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+
+            }catch(PDOException $e){
+                return null;
+            }
+        }
+
         
     }
 
