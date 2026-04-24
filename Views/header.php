@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SMSAR | Annonces Immobilieres</title>
-	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="/annonces_immobilier/assets/css/style.css">
 </head>
 <body>
 	<header class="topbar" id="accueil">
@@ -30,7 +30,7 @@
 			<div class="topbar-actions">
 				<a class="btn btn-light" href="#">Se connecter</a>
 				<a class="btn btn-register" href="#">S'inscrire</a>
-				<a class="btn btn-primary" href="#">Publier une annonce</a>
+				<a class="btn btn-primary" href="Controlles/AnnoncesCtrl.php?action=publier_ann">Publier une annonce</a>
 			</div>
 		</div>
 	</header>
