@@ -162,11 +162,7 @@
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC); //katjib ligne whda mn DB en tant que tableau associatif
 
-                if(!$user){
-                    return ['success'=> false, 'message'=> "Email ou mot de passe incorrect!"];
-                }
-
-                if(!password_verify($password, $user['Password'])){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
+                if(!$user || !password_verify($password, $user['Password'])){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
                     return ['success'=> false, 'message'=> "Email ou mot de passe incorrect!"];
                 }
 
