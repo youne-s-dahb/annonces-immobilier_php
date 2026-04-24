@@ -324,3 +324,5 @@ if (propertyCards.length > 0) {
 
 	applyFilters();
 }
+
+
