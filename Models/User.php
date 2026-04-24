@@ -181,20 +181,48 @@
             }
         }
 
-        //gestion users: recuperer user pas id et les retun sous forme de array
+        //gestion users
+
+        //recuperer user pas id et les retun sous forme de array
 
         public function getUserById($id){
             try{
 
                 $stmt = $this->db->prepare("SELECT * FROM user WHERE id_user = ?");
                 $stmt->execute([$id]);
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result;
             }catch(PDOException $e){
                 return null;
             }
         }
 
+        //list de tous les users
+
+        public function listUsers(){
+            try{
+                $stmt = $this->db->prepare("SELECT * FROM user ORDER BY id_user DESC"); //DESC: tertib mn kbir l sghir
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result;
+            }catch(PDOException $e){
+                return [];
+            }
+        }
+
+        //count users
+
+        public function countUser(){
+            try{
+                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM user");
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result['total'];
+
+            }catch(PDOException $e){
+                return 0;
+            }
+        }
         
     }
 
