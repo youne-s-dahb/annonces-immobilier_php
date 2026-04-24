@@ -91,22 +91,24 @@ if (publishForm) {
 		phoneInput.value = phoneInput.value.replace(/[^\d+]/g, '').slice(0, 13);
 	});
 
-	publishForm.addEventListener('submit', (event) => {
-		if (!phoneInput || !imagesFeedback) {
-			return;
-		}
+        publishForm.addEventListener('submit', (event) => {
+            
+            event.preventDefault();
 
-		const normalizedPhone = phoneInput.value.replace(/\s+/g, '');
-		const isPhoneValid = /^\+?\d{10,13}$/.test(normalizedPhone);
+            const normalizedPhone = phoneInput.value.replace(/\s+/g, '');
+            const isPhoneValid = /^\+?\d{10,13}$/.test(normalizedPhone);
 
-		imagesFeedback.classList.remove('is-error');
-		if (!isPhoneValid) {
-			event.preventDefault();
-			imagesFeedback.classList.add('is-error');
-			imagesFeedback.textContent = 'Telephone invalide. Utilise 10 a 13 chiffres.';
-			phoneInput.focus();
-		}
-	});
+            if (!isPhoneValid) {
+                imagesFeedback.classList.add('is-error');
+                imagesFeedback.textContent = 'Telephone invalide. Utilise 10 a 13 chiffres.';
+                phoneInput.focus();
+                return; 
+            }
+
+           
+            
+            publishForm.submit(); 
+        });
 
 	updateDescriptionCount();
 	renderImagePreviews();
