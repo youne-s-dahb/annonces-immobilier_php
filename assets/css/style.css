@@ -164,6 +164,18 @@ input {
 	color: var(--text);
 }
 
+.btn-register {
+	background: #fff;
+	border-color: rgba(122, 155, 118, 0.55);
+	color: #355e32;
+	box-shadow: 0 10px 20px rgba(122, 155, 118, 0.16);
+}
+
+.btn-register:hover {
+	background: linear-gradient(130deg, rgba(122, 155, 118, 0.14), rgba(176, 137, 104, 0.14));
+	border-color: rgba(122, 155, 118, 0.8);
+}
+
 .btn-primary {
 	background: linear-gradient(130deg, var(--primary), var(--primary-dark));
 	color: #ffffff;
@@ -839,6 +851,192 @@ input {
 	padding-top: 8px;
 }
 
+.auth-page {
+	position: relative;
+	padding: 36px 0 48px;
+	overflow: hidden;
+}
+
+.auth-page::before,
+.auth-page::after {
+	content: "";
+	position: absolute;
+	border-radius: 999px;
+	pointer-events: none;
+	filter: blur(44px);
+	z-index: 0;
+}
+
+.auth-page::before {
+	width: 320px;
+	height: 320px;
+	left: -90px;
+	top: -70px;
+	background: rgba(122, 155, 118, 0.28);
+}
+
+.auth-page::after {
+	width: 280px;
+	height: 280px;
+	right: -80px;
+	bottom: -100px;
+	background: rgba(176, 137, 104, 0.25);
+}
+
+.auth-shell {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+	gap: 18px;
+	align-items: stretch;
+}
+
+.auth-aside,
+.auth-card {
+	border: 1px solid var(--line);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-sm);
+	padding: clamp(18px, 2.4vw, 30px);
+	animation: cardAppear 320ms ease;
+}
+
+.auth-aside {
+	background:
+		radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.62) 0%, transparent 42%),
+		linear-gradient(140deg, rgba(122, 155, 118, 0.18), rgba(176, 137, 104, 0.2));
+	border-color: rgba(176, 137, 104, 0.38);
+	display: grid;
+	align-content: start;
+	gap: 12px;
+}
+
+.auth-kicker {
+	font-size: 0.8rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.9px;
+	color: #4f674c;
+}
+
+.auth-aside h1 {
+	font-size: clamp(1.3rem, 2.2vw, 1.95rem);
+	line-height: 1.22;
+}
+
+.auth-aside p {
+	color: #5f564b;
+	max-width: 52ch;
+}
+
+.auth-points {
+	list-style: none;
+	display: grid;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.auth-points li {
+	position: relative;
+	padding-left: 18px;
+	color: #4e453a;
+	font-weight: 600;
+}
+
+.auth-points li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.5em;
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: linear-gradient(130deg, var(--primary), var(--earth));
+}
+
+.auth-card {
+	background: #fff;
+	display: grid;
+	align-content: start;
+	gap: 14px;
+	border-color: #dfd4c4;
+	box-shadow: var(--shadow-md);
+}
+
+.auth-card-head h2 {
+	font-size: 1.36rem;
+	margin-bottom: 2px;
+}
+
+.auth-card-head p {
+	color: var(--text-soft);
+	font-size: 0.95rem;
+}
+
+.auth-form {
+	display: grid;
+	gap: 10px;
+}
+
+.auth-form label {
+	font-size: 0.86rem;
+	font-weight: 700;
+	color: #534a3f;
+	margin-top: 2px;
+}
+
+.auth-form input {
+	width: 100%;
+	border: 1px solid var(--line);
+	background: #fff;
+	border-radius: 12px;
+	padding: 11px 12px;
+	color: var(--text);
+	outline: none;
+	transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.auth-form input:focus {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(122, 155, 118, 0.14);
+}
+
+.auth-submit {
+	margin-top: 8px;
+	border: 0;
+	cursor: pointer;
+	border-radius: 12px;
+	padding: 12px;
+	font-weight: 800;
+	color: #fff;
+	background: linear-gradient(130deg, var(--primary), var(--primary-dark));
+	box-shadow: 0 12px 22px rgba(95, 127, 91, 0.26);
+	transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.auth-submit:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 15px 24px rgba(95, 127, 91, 0.32);
+}
+
+.auth-switch {
+	font-size: 0.9rem;
+	color: #675d51;
+}
+
+.auth-switch a {
+	font-weight: 800;
+	color: #355e32;
+	border-bottom: 1px solid rgba(53, 94, 50, 0.4);
+	padding-bottom: 1px;
+	transition: color 180ms ease, border-color 180ms ease;
+}
+
+.auth-switch a:hover {
+	color: #274626;
+	border-color: rgba(39, 70, 38, 0.72);
+}
+
 @media (max-width: 1240px) {
 	.topbar-inner {
 		grid-template-columns: 1fr;
@@ -865,6 +1063,10 @@ input {
 
 	.filters-panel {
 		position: static;
+	}
+
+	.auth-shell {
+		grid-template-columns: 1fr;
 	}
 }
 
@@ -954,6 +1156,15 @@ input {
 	.results-head {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.auth-page {
+		padding-top: 22px;
+	}
+
+	.auth-aside,
+	.auth-card {
+		padding: 16px;
 	}
 }
 
