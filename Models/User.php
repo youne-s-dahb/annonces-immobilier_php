@@ -223,6 +223,49 @@
                 return 0;
             }
         }
+
+        //modifer profil user
+
+        public function modifierProfil($id, $nom, $prenom, $email,  $telephone){
+            try{
+                $validNom = $this->validName($nom);
+                $validPre = $this->validName($prenom);
+                $validEmail = $this->validEmail($email);
+                $validPhone = $this->validTele($telephone);
+
+                //verifier wach ga3 les données dial user correct
+                if(!$validNom['valid'] || !$validPre['valid'] || !$validEmail['valid'] || !$validPhone['valid'] ){
+                    return ['success'=>false, 'message'=>"Données non valide!"];
+                }
+
+                $stmt = $this->db->prepare("UPDATE user SET Nom = ?, Prenom = ?, Gmail = ?, Telephone = ? WHERE id_user = ?");
+
+                $stmt->execute([
+                    trim($nom),
+                    trim($prenom),
+                    trim($email),
+                    trim($telephone),
+                    $id
+                ]);
+
+                return ['sucess'=>true, 'message'=>"Profil mis a jour avec succés"];
+
+            }catch(PDOException $e){
+                return ['success'=>false, 'message'=>"Erreur lors de la mofication.Veuillez réessayer plus tard!!"];
+            }
+        }
+
+        //supp user
+
+        public function suppUser($id){
+            try{
+                $stmt = $this->db->prepare("DELETE FROM user WHERE id_user = ?");
+                $stmt->execute([$id]);
+
+            }catch(PDOException $e){
+                return ['success'=>false, 'message'=>"Erreur lors de la suppression.Veuillez réessayer plus tard!!"];
+            }
+        }
         
     }
 
