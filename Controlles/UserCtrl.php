@@ -1,7 +1,6 @@
 <?php
 
     use User;
-
     require_once(__DIR__ . "/../Models/User.php");
     require_once(__DIR__ . "/../db.php");
 
