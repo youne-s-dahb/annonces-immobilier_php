@@ -29,6 +29,7 @@
 			</nav>
 			<div class="topbar-actions">
 				<a class="btn btn-light" href="#">Se connecter</a>
+				<a class="btn btn-register" href="#">S'inscrire</a>
 				<a class="btn btn-primary" href="#">Publier une annonce</a>
 			</div>
 		</div>
