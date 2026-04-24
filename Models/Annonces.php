@@ -63,6 +63,9 @@ class annonces{
             }
         }
     }
+    public function publier_annonce(){
+        
+    }
 
 
 }
