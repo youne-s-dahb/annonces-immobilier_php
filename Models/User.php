@@ -135,7 +135,7 @@
                 $hashedPass = password_hash($password, PASSWORD_BCRYPT); //  password_hash(): fonction li katdir hashing sécurisé, PASSWORD_BCRYPT: protection contre rute force 
 
                 //add user
-                $stmt = $this->db->prepare("INSERT INTO user (Nom, Prenom, Gmail, Pasword, Telephone) VALUES (?,?,?,?,?)");
+                $stmt = $this->db->prepare("INSERT INTO user (Nom, Prenom, Gmail, Password, Telephone) VALUES (?,?,?,?,?)");
 
                 //remplacer ? par les valeurs
                 $stmt->execute([
@@ -146,10 +146,10 @@
                     trim($telephone)
                 ]);
                 
-                return ['sucess'=>true, 'message'=>'Inscription réussite'];
+                return ['success'=>true, 'message'=>'Inscription réussite'];
 
             }catch(PDOException $e){
-                return['succes'=>false, 'message'=>"Erreur lors de l'inscription. Veuillez réessayer plus tard"];  //$e.->getMessage()
+                return['success'=>false, 'message'=>"Erreur lors de l'inscription. Veuillez réessayer plus tard"];  //$e.->getMessage()
             }
         }
 
@@ -162,18 +162,20 @@
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC); //katjib ligne whda mn DB en tant que tableau associatif
 
-                if(!$user || !password_verify($password, $user['Password'])){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
+                $storedPassword = $user['Pasword'] ?? ($user['Password'] ?? '');
+
+                if(!$user || !password_verify($password, $storedPassword)){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
                     return ['success'=> false, 'message'=> "Email ou mot de passe incorrect!"];
                 }
 
                 //kolchi s7i7: return infos user
 
-                return ['sucess'=>true, 'user'=> [
+                return ['success'=>true, 'user'=> [
                     'id_user'=>$user['id_user'],
-                    'nom'=>$user['nom'],
-                    'prenom'=>$user['prenom'],
-                    'email'=>$user['email'],
-                    'role'=>$user['role']
+                    'nom'=>$user['Nom'] ?? '',
+                    'prenom'=>$user['Prenom'] ?? '',
+                    'email'=>$user['Gmail'] ?? '',
+                    'telephone'=>$user['Telephone'] ?? ''
                 ]];
 
             }catch(PDOException $e){
@@ -248,7 +250,7 @@
                     $id
                 ]);
 
-                return ['sucess'=>true, 'message'=>"Profil mis a jour avec succés"];
+                return ['success'=>true, 'message'=>"Profil mis a jour avec succés"];
 
             }catch(PDOException $e){
                 return ['success'=>false, 'message'=>"Erreur lors de la mofication.Veuillez réessayer plus tard!!"];

@@ -325,4 +325,264 @@ if (propertyCards.length > 0) {
 	applyFilters();
 }
 
+const profileModal = document.getElementById('profile-modal');
+const profileModalTitle = document.getElementById('profile-modal-title');
+const profileModalBody = document.getElementById('profile-modal-body');
+const profileModalConfirm = document.getElementById('profile-modal-confirm');
+
+if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm) {
+	let currentMode = '';
+	let currentCard = null;
+	let lastTrigger = null;
+
+	const escapeHtml = (value) => {
+		const text = (value ?? '').toString();
+		return text
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#039;');
+	};
+
+	const getCardData = (card) => ({
+		title: card?.dataset.annonceTitle || 'Annonce',
+		description: card?.dataset.annonceDescription || '',
+		price: card?.dataset.annoncePrice || '',
+		type: card?.dataset.annonceType || '',
+		ville: card?.dataset.annonceVille || '',
+		categorie: card?.dataset.annonceCategorie || '',
+	});
+
+	const renderModal = () => {
+		if (!profileModalBody || !profileModalTitle) {
+			return;
+		}
+
+		const data = getCardData(currentCard);
+
+		if (currentMode === 'edit-profile') {
+			profileModalTitle.textContent = 'Modifier le profil';
+			profileModalBody.innerHTML = `
+				<p>Change tes infos personnelles avec une interface rapide. Cette action reste front-end pour le moment.</p>
+				<div class="profile-modal-form">
+					<div class="field">
+						<label for="profile-name">Nom complet</label>
+						<input id="profile-name" type="text" placeholder="Nom et prénom" />
+					</div>
+					<div class="field">
+						<label for="profile-phone">Téléphone</label>
+						<input id="profile-phone" type="text" placeholder="06XXXXXXXX" />
+					</div>
+					<div class="field full">
+						<label for="profile-email">Email</label>
+						<input id="profile-email" type="email" placeholder="nom@email.com" />
+					</div>
+				</div>
+				<div class="profile-modal-note">Preview only: backend dyal update profil mazal ma connectach.</div>
+			`;
+			profileModalConfirm.textContent = 'Enregistrer';
+			profileModalConfirm.classList.remove('danger');
+			return;
+		}
+
+		if (currentMode === 'manage-annonces') {
+			profileModalTitle.textContent = 'Gestion des annonces';
+			profileModalBody.innerHTML = `
+				<p>Mn hna t9der tdir tri, édition, suppression b workflow n9i. L'actions d backend mazal placeholder.</p>
+				<div class="profile-modal-note">Tu peux lancer l'édition/suppression depuis chaque card مباشرة.</div>
+			`;
+			profileModalConfirm.textContent = 'Compris';
+			profileModalConfirm.classList.remove('danger');
+			return;
+		}
+
+		if (currentMode === 'favorites') {
+			profileModalTitle.textContent = 'Favoris et suivis';
+			profileModalBody.innerHTML = `
+				<p>UI de favoris prête pour extension. Nqder nزيد section cards/filtres mخصصين ila bghiti.</p>
+				<div class="profile-modal-note">Feature front-end scaffolded, ready for backend data.</div>
+			`;
+			profileModalConfirm.textContent = 'Fermer';
+			profileModalConfirm.classList.remove('danger');
+			return;
+		}
+
+		if (currentMode === 'edit-annonce') {
+			profileModalTitle.textContent = 'Modifier l\'annonce';
+			profileModalBody.innerHTML = `
+				<p>Édite l'annonce: <strong>${escapeHtml(data.title)}</strong></p>
+				<div class="profile-modal-form">
+					<div class="field full">
+						<label for="annonce-title">Titre</label>
+						<input id="annonce-title" type="text" value="${escapeHtml(data.title)}" />
+					</div>
+					<div class="field full">
+						<label for="annonce-description">Description</label>
+						<textarea id="annonce-description">${escapeHtml(data.description)}</textarea>
+					</div>
+					<div class="field">
+						<label for="annonce-price">Prix (DH)</label>
+						<input id="annonce-price" type="number" value="${escapeHtml(data.price)}" />
+					</div>
+					<div class="field">
+						<label for="annonce-type">Type</label>
+						<input id="annonce-type" type="text" value="${escapeHtml(data.type)}" />
+					</div>
+					<div class="field">
+						<label for="annonce-ville">Ville</label>
+						<input id="annonce-ville" type="text" value="${escapeHtml(data.ville)}" />
+					</div>
+					<div class="field">
+						<label for="annonce-categorie">Categorie</label>
+						<input id="annonce-categorie" type="text" value="${escapeHtml(data.categorie)}" />
+					</div>
+				</div>
+				<div class="profile-modal-note">Preview only: ghi UI update, ma kaynch save backend daba.</div>
+			`;
+			profileModalConfirm.textContent = 'Appliquer';
+			profileModalConfirm.classList.remove('danger');
+			return;
+		}
+
+		profileModalTitle.textContent = 'Supprimer l\'annonce';
+		profileModalBody.innerHTML = `
+			<p>Kathemm b supprimer had l'annonce:</p>
+			<p><strong>${escapeHtml(data.title)}</strong></p>
+			<div class="profile-modal-note warn">Front-end only: ghadi nmaski card locally, sans suppression DB.</div>
+		`;
+		profileModalConfirm.textContent = 'Supprimer';
+		profileModalConfirm.classList.add('danger');
+	};
+
+	const renderFallbackModal = () => {
+		profileModalTitle.textContent = 'Action profil';
+		profileModalBody.innerHTML = `
+			<p>Hadi action front-end preview.</p>
+			<div class="profile-modal-note">Ikhtar "Modifier" wla "Supprimer" mn cards bach tban details dyal l\'action.</div>
+		`;
+		profileModalConfirm.textContent = 'Fermer';
+		profileModalConfirm.classList.remove('danger');
+	};
+
+	const openModal = (mode, trigger) => {
+		currentMode = mode;
+		lastTrigger = trigger || null;
+		currentCard = trigger?.closest('.profile-card') || null;
+
+		if (!currentMode) {
+			renderFallbackModal();
+		} else {
+			renderModal();
+		}
+
+		profileModal.hidden = false;
+		profileModal.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('has-profile-modal');
+	};
+
+	const closeModal = () => {
+		profileModal.setAttribute('aria-hidden', 'true');
+		profileModal.hidden = true;
+		document.body.classList.remove('has-profile-modal');
+		if (lastTrigger && typeof lastTrigger.focus === 'function') {
+			lastTrigger.focus();
+		}
+	};
+
+	document.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		const trigger = target.closest('[data-profile-open]');
+		if (!trigger) {
+			return;
+		}
+
+		event.preventDefault();
+		const mode = trigger.getAttribute('data-profile-open') || '';
+		openModal(mode, trigger);
+	});
+
+	profileModal.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		if (target.closest('[data-profile-close="true"]')) {
+			closeModal();
+		}
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && !profileModal.hidden) {
+			closeModal();
+		}
+	});
+
+	profileModalConfirm.addEventListener('click', () => {
+		if (currentMode === '' || currentMode === 'favorites' || currentMode === 'manage-annonces' || currentMode === 'edit-profile') {
+			closeModal();
+			return;
+		}
+
+		if (currentMode === 'delete-annonce' && currentCard) {
+			currentCard.classList.add('is-pending-delete');
+		}
+
+		if (currentMode === 'edit-annonce' && currentCard) {
+			const titleInput = document.getElementById('annonce-title');
+			const descriptionInput = document.getElementById('annonce-description');
+			const priceInput = document.getElementById('annonce-price');
+			const typeInput = document.getElementById('annonce-type');
+			const villeInput = document.getElementById('annonce-ville');
+			const categorieInput = document.getElementById('annonce-categorie');
+
+			const title = titleInput?.value?.trim() || currentCard.dataset.annonceTitle || '';
+			const description = descriptionInput?.value?.trim() || currentCard.dataset.annonceDescription || '';
+			const price = priceInput?.value?.trim() || currentCard.dataset.annoncePrice || '';
+			const type = typeInput?.value?.trim() || currentCard.dataset.annonceType || '';
+			const ville = villeInput?.value?.trim() || currentCard.dataset.annonceVille || '';
+			const categorie = categorieInput?.value?.trim() || currentCard.dataset.annonceCategorie || '';
+
+			currentCard.dataset.annonceTitle = title;
+			currentCard.dataset.annonceDescription = description;
+			currentCard.dataset.annoncePrice = price;
+			currentCard.dataset.annonceType = type;
+			currentCard.dataset.annonceVille = ville;
+			currentCard.dataset.annonceCategorie = categorie;
+
+			const cardTitle = currentCard.querySelector('.card-body h3');
+			const cardDescription = currentCard.querySelector('.card-description');
+			const cardPrice = currentCard.querySelector('.profile-price-pill');
+			const cardType = currentCard.querySelector('.type-badge');
+			const meta = currentCard.querySelectorAll('.profile-meta span');
+
+			if (cardTitle) {
+				cardTitle.textContent = title || 'Annonce';
+			}
+			if (cardDescription) {
+				cardDescription.textContent = description;
+			}
+			if (cardPrice) {
+				cardPrice.textContent = `${price || '0'} DH`;
+			}
+			if (cardType) {
+				cardType.textContent = type;
+			}
+			if (meta[0]) {
+				meta[0].textContent = `Ville : ${ville}`;
+			}
+			if (meta[1]) {
+				meta[1].textContent = `Categorie : ${categorie}`;
+			}
+		}
+
+		closeModal();
+	});
+}
+
 
