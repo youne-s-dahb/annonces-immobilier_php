@@ -35,7 +35,7 @@ include(__DIR__ . "/header.php");
                     <p>Inscrivez-vous pour publier vos annonces</p>
                 </div>
 
-                <form method="POST" action="../Controlles/UserCtrl.php" class="auth-form" id="registerForm">
+                <form method="POST" action="/annonces_immobilier/Controlles/UserCtrl.php" class="auth-form" id="registerForm">
                     <input type="hidden" name="action" value="register">
 
                     <!-- Nom -->
@@ -155,7 +155,7 @@ include(__DIR__ . "/header.php");
                 <!-- Lien connexion -->
                 <p class="auth-footer">
                     Vous avez déjà un compte? 
-                    <a href="login.php" class="auth-link">Se connecter</a>
+                    <a href="/annonces_immobilier/Views/login.php" class="auth-link">Se connecter</a>
                 </p>
             </div>
         </div>
