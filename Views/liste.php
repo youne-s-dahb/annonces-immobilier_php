@@ -111,6 +111,26 @@
 
 							return array_values($images);
 						};
+<<<<<<< HEAD
+=======
+
+						$resolveImageSrc = static function (string $image): string {
+							$cleanImage = trim($image);
+							if ($cleanImage === '') {
+								return '';
+							}
+
+							if (preg_match('/^(https?:\/\/|\/)/i', $cleanImage) === 1) {
+								return $cleanImage;
+							}
+
+							if (strpos($cleanImage, 'assets/img/') === 0) {
+								return $cleanImage;
+							}
+
+							return 'assets/img/'.$cleanImage;
+						};
+>>>>>>> origin/dev_test
 					?>
 					<?php foreach ($lesAnnonces as $index => $annonce): ?>
 						<?php
@@ -155,7 +175,12 @@
 								<?php else: ?>
 									<div id="<?php echo htmlspecialchars($galleryId); ?>" class="media-gallery<?php echo count($images) === 1 ? ' single' : ''; ?>">
 										<?php foreach ($images as $imageSrc): ?>
+<<<<<<< HEAD
 											<img src="<?php echo htmlspecialchars((string) $imageSrc); ?>" alt="<?php echo htmlspecialchars((string) $titre); ?>" class="card-image" loading="lazy" decoding="async">
+=======
+											<?php $displayImageSrc = $resolveImageSrc((string) $imageSrc); ?>
+											<img src="<?php echo htmlspecialchars($displayImageSrc); ?>" alt="<?php echo htmlspecialchars((string) $titre); ?>" class="card-image" loading="lazy" decoding="async">
+>>>>>>> origin/dev_test
 										<?php endforeach; ?>
 									</div>
 									<?php if (count($images) > 1): ?>

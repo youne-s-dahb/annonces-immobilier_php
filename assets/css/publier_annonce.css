@@ -1,0 +1,233 @@
+.pa-page {
+    padding: 28px 0 36px;
+}
+
+.pa-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.pa-intro,
+.pa-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    padding: clamp(16px, 2vw, 24px);
+}
+
+.pa-intro {
+    position: sticky;
+    top: 88px;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+        linear-gradient(140deg, rgba(122, 155, 118, 0.2), rgba(176, 137, 104, 0.22));
+}
+
+.pa-kicker {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #446841;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.pa-intro h1 {
+    font-size: clamp(1.2rem, 2vw, 1.9rem);
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.pa-text {
+    color: #5f564b;
+    margin-bottom: 12px;
+}
+
+.pa-points {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.pa-points li {
+    position: relative;
+    padding-left: 18px;
+    color: #4f4538;
+    font-weight: 600;
+}
+
+.pa-points li::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    position: absolute;
+    left: 0;
+    top: 0.48em;
+    background: linear-gradient(130deg, var(--primary), var(--earth));
+}
+
+.pa-card {
+    border-color: #dfd4c4;
+}
+
+.pa-head {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+.pa-head h2 {
+    font-size: 1.35rem;
+    margin-bottom: 3px;
+}
+
+.pa-head p {
+    color: var(--text-soft);
+    font-size: 0.92rem;
+}
+
+.pa-form {
+    display: grid;
+    gap: 10px;
+}
+
+.pa-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.pa-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pa-field {
+    display: grid;
+    gap: 6px;
+}
+
+.pa-field label {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #534a3f;
+}
+
+.pa-field input,
+.pa-field select,
+.pa-field textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 12px;
+    padding: 11px 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.pa-field textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.pa-field input:focus,
+.pa-field select:focus,
+.pa-field textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(122, 155, 118, 0.14);
+}
+
+.pa-help {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+}
+
+.pa-help.is-error {
+    color: #b24d39;
+    font-weight: 700;
+}
+
+.pa-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.pa-preview-item {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f8f4ee;
+    aspect-ratio: 1 / 1;
+}
+
+.pa-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pa-preview-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(35, 28, 22, 0.78);
+    color: #fff;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.pa-preview-remove:hover {
+    background: rgba(35, 28, 22, 0.94);
+    transform: scale(1.05);
+}
+
+.pa-submit {
+    margin-top: 8px;
+    border: 0;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(130deg, var(--earth), #9f7858);
+    box-shadow: 0 10px 20px rgba(176, 137, 104, 0.24);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.pa-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 13px 24px rgba(176, 137, 104, 0.3);
+}
+
+@media (max-width: 980px) {
+    .pa-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .pa-intro {
+        position: static;
+    }
+}
+
+@media (max-width: 680px) {
+    .pa-page {
+        padding-top: 18px;
+    }
+
+    .pa-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}

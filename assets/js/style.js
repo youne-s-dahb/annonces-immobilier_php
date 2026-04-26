@@ -324,3 +324,8 @@ if (propertyCards.length > 0) {
 
 	applyFilters();
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/dev_test
