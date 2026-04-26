@@ -264,6 +264,8 @@
                 $stmt = $this->db->prepare("DELETE FROM user WHERE id_user = ?");
                 $stmt->execute([$id]);
 
+                return ['success'=>true, 'message'=>"Compte supprimé avec succés"];
+
             }catch(PDOException $e){
                 return ['success'=>false, 'message'=>"Erreur lors de la suppression.Veuillez réessayer plus tard!!"];
             }

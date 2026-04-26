@@ -1,9 +1,10 @@
 <?php
-
+//import des class
 require_once(__DIR__ . "/../Models/User.php");
 require_once(__DIR__ . "/../Models/Annonces.php");
 require_once(__DIR__ . "/../db.php");
 
+//demarrer session si elle n'est pas actif
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,18 +14,23 @@ $annonceModel = new annonces($db);
 $errors = [];
 $success = false;
 $message = '';
+
+//recuperer user connecte
 $currentUser = $_SESSION['user'] ?? null;
 $userAnnonces = [];
 
 $action = $_GET['action'] ?? ($_POST['action'] ?? 'login');
 
+//logout
 if ($action === 'logout') {
     unset($_SESSION['user']);
     header('Location: /annonces_immobilier/Views/login.php');
     exit();
 }
 
+//s'inscrire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
+    //recup les données du form
     $nom = trim($_POST['nom'] ?? '');
     $prenom = trim($_POST['prenom'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -32,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
     $password_confirm = $_POST['password_confirm'] ?? '';
     $telephone = trim($_POST['telephone'] ?? '');
 
+    //verify password
     if ($password !== $password_confirm) {
         $errors[] = 'Les mots de passe ne correspondent pas.';
     } else {
@@ -57,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
     exit();
 }
 
+//login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'login') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
