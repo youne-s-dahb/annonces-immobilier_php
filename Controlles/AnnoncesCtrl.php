@@ -2,6 +2,10 @@
 require_once(__DIR__."/../Models/Annonces.php");
 require_once(__DIR__."/../db.php");
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 $modelAnnonces=new annonces($db);
 <<<<<<< HEAD
@@ -36,9 +40,19 @@ include (__DIR__."/../Views/liste.php");
 
 //parti publier annonces
 if(isset( $_GET["action"]) && $_GET["action"] == "publier_ann" ){
+          if (empty($_SESSION['user']['id_user'])) {
+             header("Location: /annonces_immobilier/Controlles/UserCtrl.php?action=login");
+             exit();
+          }
             require_once(__DIR__."/../Views/publier_annonce.php");
 }
 elseif(isset($_GET["action"]) && $_GET["action"] == "save"){
+   if (empty($_SESSION['user']['id_user'])) {
+       header("Location: /annonces_immobilier/Controlles/UserCtrl.php?action=login");
+       exit();
+   }
+
+   $_POST['id_user'] = $_SESSION['user']['id_user'];
     $id_annonce =$modelAnnonces->publier_annonce($_POST);
 
    if ($id_annonce) {
@@ -61,6 +75,10 @@ elseif(isset($_GET["action"]) && $_GET["action"] == "save"){
         header("Location: ../index.php");
         exit();
     }
+}
+elseif(isset($_GET["action"]) && $_GET["action"] == "profil"){
+    header("Location: /annonces_immobilier/Controlles/UserCtrl.php?action=profil");
+    exit();
 }
 else{
         include (__DIR__."/../Views/liste.php");
