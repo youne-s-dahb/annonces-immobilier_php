@@ -16,6 +16,48 @@ $errors = [];
 $success = false;
 $message = '';
 
+// MODIFICATION DE PROFIL 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profil') {
+    
+    $userId = $_SESSION['user_id'] ?? null;
+    
+    if (!$userId) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Non authentifié']);
+        exit;
+    }
+
+    $nom = $_POST['nom'] ?? '';
+    $prenom = $_POST['prenom'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $telephone = $_POST['telephone'] ?? '';
+
+    // Appeler la méthode modifierProfil
+    $result = $userModel->modifierProfil($userId, $nom, $prenom, $email, $telephone);
+
+    // Répondre en JSON
+    header('Content-Type: application/json');
+    
+    if ($result['success']) {
+        // Mettre à jour la session
+        $_SESSION['user_nom'] = $nom;
+        $_SESSION['user_prenom'] = $prenom;
+        $_SESSION['user_email'] = $email;
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Profil mis à jour avec succès!'
+        ]);
+    } else {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $result['message']
+        ]);
+    }
+    exit;
+}
+
 //recuperer user connecte
 $currentUser = $_SESSION['user'] ?? null;
 $userAnnonces = [];

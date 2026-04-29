@@ -46,6 +46,9 @@ if (!empty($userAnnonces)) {
 include(__DIR__ . "/header.php");
 ?>
 
+<!-- Lier le CSS ici -->
+<link rel="stylesheet" href="../assets/css/modifierInfo.css">
+
 <main class="page-shell">
     <div class="container listing-layout profile-layout">
         <section class="results-panel profile-panel" aria-label="Profil utilisateur">
@@ -105,16 +108,20 @@ include(__DIR__ . "/header.php");
                 </div>
 
                 <div class="profile-settings-grid">
-                    <button type="button" class="profile-settings-card profile-settings-card-btn" data-profile-open="edit-profile">
+
+                    <!-- BOUTON MODIFIER INFOS -->
+                    <button type="button" class="profile-settings-card profile-settings-card-btn" id="btn-open-modifier-infos">
                         <span class="profile-settings-icon" aria-hidden="true">✎</span>
-                        <strong>Modifier mes infos</strong>
+                        <strong>Modifier mes informations personnel</strong>
                         <span>Nom, email, téléphone</span>
                     </button>
+
                     <button type="button" class="profile-settings-card profile-settings-card-btn" data-profile-open="manage-annonces">
                         <span class="profile-settings-icon" aria-hidden="true">☰</span>
                         <strong>Gérer mes annonces</strong>
                         <span>Voir, éditer ou supprimer</span>
                     </button>
+                
                     <button type="button" class="profile-settings-card profile-settings-card-btn" data-profile-open="favorites">
                         <span class="profile-settings-icon" aria-hidden="true">★</span>
                         <strong>Favoris et suivis</strong>
@@ -138,7 +145,7 @@ include(__DIR__ . "/header.php");
                                 <svg viewBox="0 0 24 24"><path d="M12 2 2 7v15h20V7Zm0 2.3L18.4 7 12 11.1 5.6 7ZM4 9.6l7 4.5v8H4Zm9 12.5v-8l7-4.5v12.5Z"/></svg>
                             </div>
                             <h3>Aucune annonce publiée</h3>
-                            <p>Le tableau est vide pour l’instant. Publie une annonce pour remplir ton espace personnel.</p>
+                            <p>Le tableau est vide pour l'instant. Publie une annonce pour remplir ton espace personnel.</p>
                             <div class="card-actions">
                                 <a class="card-action-btn primary" href="/annonces_immobilier/Controlles/AnnoncesCtrl.php?action=publier_ann">Créer une annonce</a>
                             </div>
@@ -225,11 +232,99 @@ include(__DIR__ . "/header.php");
                 </footer>
             </section>
         </div>
+
+        <!-- ================== MODAL MODIFIER INFOS ================== -->
+        <div class="modal-modifier-infos" id="modal-modifier-infos">
+            <div class="modal-modifier-content">
+                <!-- En-tête modal -->
+                <div class="modal-modifier-header">
+                    <h2>Modifier mes informations</h2>
+                    <button type="button" class="modal-close-btn" id="close-modal-btn">×</button>
+                </div>
+
+                <!-- Alertes -->
+                <div id="modifier-alerts-container"></div>
+
+                <!-- Formulaire -->
+                <form method="POST" class="modifier-form" id="modifier-form">
+                    <input type="hidden" name="action" value="update_profil">
+
+                    <!-- Nom -->
+                    <div class="form-group">
+                        <label for="modifier-nom">Nom</label>
+                        <input
+                            type="text"
+                            id="modifier-nom"
+                            name="nom"
+                            class="form-input"
+                            placeholder="Dupont"
+                            required
+                            minlength="3"
+                            maxlength="30"
+                            value="<?php echo htmlspecialchars($currentUser['nom'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="form-group">
+                        <label for="modifier-prenom">Prénom</label>
+                        <input
+                            type="text"
+                            id="modifier-prenom"
+                            name="prenom"
+                            class="form-input"
+                            placeholder="Jean"
+                            required
+                            minlength="3"
+                            maxlength="30"
+                            value="<?php echo htmlspecialchars($currentUser['prenom'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="modifier-email">Email</label>
+                        <input
+                            type="email"
+                            id="modifier-email"
+                            name="email"
+                            class="form-input"
+                            placeholder="votre@email.com"
+                            required
+                            value="<?php echo htmlspecialchars($currentUser['email'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="form-group">
+                        <label for="modifier-telephone">Téléphone</label>
+                        <input
+                            type="tel"
+                            id="modifier-telephone"
+                            name="telephone"
+                            class="form-input"
+                            placeholder="+212 612345678"
+                            required
+                            value="<?php echo htmlspecialchars($currentUser['telephone'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="modifier-form-actions">
+                        <button type="submit" class="btn-modifier-save" id="btn-modifier-save">
+                            Enregistrer les modifications
+                        </button>
+                        <button type="button" class="btn-modifier-cancel" id="btn-modifier-cancel">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- ================== FIN MODAL ================== -->
+
     </div>
 </main>
-
-<!-- Lier le CSS -->
-<link rel="stylesheet" href="../assets/css/modifierInfo.css">
 
 <script>
 // ==================== GESTION MODAL ==================== 
@@ -319,7 +414,8 @@ formModifier.addEventListener('submit', async (e) => {
     btnSave.disabled = true;
 
     try {
-        const formData = new FormData(formModifier);
+        
+        const formData = new FormData(formModifier); //FormData = Classe native JavaScript
         const response = await fetch('Controllers/UserCtrl.php', {
             method: 'POST',
             body: formData
