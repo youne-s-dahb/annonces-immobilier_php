@@ -228,4 +228,149 @@ include(__DIR__ . "/header.php");
     </div>
 </main>
 
+<!-- Lier le CSS -->
+<link rel="stylesheet" href="../assets/css/modifierInfo.css">
+
+<script>
+// ==================== GESTION MODAL ==================== 
+
+const modalModifier = document.getElementById('modal-modifier-infos');
+const btnOpenModifier = document.getElementById('btn-open-modifier-infos');
+const btnCloseModal = document.getElementById('close-modal-btn');
+const btnCancelModifier = document.getElementById('btn-modifier-cancel');
+const formModifier = document.getElementById('modifier-form');
+const btnSave = document.getElementById('btn-modifier-save');
+const alertsContainer = document.getElementById('modifier-alerts-container');
+
+// Ouvrir la modal
+btnOpenModifier.addEventListener('click', () => {
+    modalModifier.classList.add('active');
+    document.body.style.overflow = 'hidden';
+});
+
+// Fermer la modal
+function closeModal() {
+    modalModifier.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    alertsContainer.innerHTML = '';
+}
+
+btnCloseModal.addEventListener('click', closeModal);
+btnCancelModifier.addEventListener('click', closeModal);
+
+// Fermer en cliquant en dehors
+modalModifier.addEventListener('click', (e) => {
+    if (e.target === modalModifier) {
+        closeModal();
+    }
+});
+
+// Fermer avec Echap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalModifier.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// ==================== SOUMISSION FORMULAIRE ==================== 
+
+formModifier.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Récupérer les données
+    const nom = document.getElementById('modifier-nom').value.trim();
+    const prenom = document.getElementById('modifier-prenom').value.trim();
+    const email = document.getElementById('modifier-email').value.trim();
+    const telephone = document.getElementById('modifier-telephone').value.trim();
+
+    // Validation basique côté client
+    if (!nom || !prenom || !email || !telephone) {
+        showAlert('❌ Tous les champs sont obligatoires', 'error');
+        return;
+    }
+
+    if (nom.length < 3 || prenom.length < 3) {
+        showAlert('❌ Le nom et prénom doivent avoir au moins 3 caractères', 'error');
+        return;
+    }
+
+    if (nom.length > 30 || prenom.length > 30) {
+        showAlert('❌ Le nom et prénom ne doivent pas dépasser 30 caractères', 'error');
+        return;
+    }
+
+    // Validation email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showAlert('❌ Format d\'email invalide', 'error');
+        return;
+    }
+
+    // Validation téléphone (format Maroc)
+    const phoneRegex = /^(\+212|0)[67]\d{8}$/;
+    const cleanPhone = telephone.replace(/\s|-/g, '');
+    if (!phoneRegex.test(cleanPhone)) {
+        showAlert('❌ Format téléphone invalide (ex: +212 612345678 ou 0612345678)', 'error');
+        return;
+    }
+
+    // Envoyer au serveur
+    btnSave.classList.add('loading');
+    btnSave.disabled = true;
+
+    try {
+        const formData = new FormData(formModifier);
+        const response = await fetch('Controllers/UserCtrl.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('✅ ' + result.message, 'success');
+            
+            // Rafraîchir la page après 2 secondes
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            const errorMsg = result.message || 'Une erreur est survenue';
+            showAlert('❌ ' + errorMsg, 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('❌ Erreur serveur. Veuillez réessayer.', 'error');
+    } finally {
+        btnSave.classList.remove('loading');
+        btnSave.disabled = false;
+    }
+});
+
+// ==================== FONCTION AFFICHAGE ALERTES ==================== 
+
+function showAlert(message, type) {
+    const alertClass = type === 'success' ? 'modal-alert-success' : 'modal-alert-error';
+    const alertIcon = type === 'success' ? '✓' : '!';
+
+    const alertHTML = `
+        <div class="modal-alert ${alertClass}">
+            <span class="modal-alert-icon">${alertIcon}</span>
+            <div class="modal-alert-content">
+                <p>${message}</p>
+            </div>
+        </div>
+    `;
+
+    alertsContainer.innerHTML = alertHTML;
+
+    // Auto-masquer les alertes d'erreur après 5 secondes
+    if (type === 'error') {
+        setTimeout(() => {
+            alertsContainer.innerHTML = '';
+        }, 5000);
+    }
+}
+</script>
+
 <?php include(__DIR__ . "/footer.php"); ?>
