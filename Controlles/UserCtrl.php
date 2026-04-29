@@ -213,6 +213,7 @@ class UserController {
         $_SESSION['user']['nom'] = $data['nom'];
         $_SESSION['user']['prenom'] = $data['prenom'];
         $_SESSION['user']['email'] = $data['email'];
+        $_SESSION['user']['telephone'] = $data['telephone'];
     }
     
     private function jsonResponse(bool $success, string $message, int $code = 200): void {
