@@ -21,6 +21,7 @@ if (!empty($currentUser)) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SMSAR | Annonces Immobilieres</title>
 	<link rel="stylesheet" href="/annonces_immobilier/assets/css/style.css">
+	<link rel="stylesheet" href="/annonces_immobilier/assets/css/modifierInfo.css">
 </head>
 <body>
 	<header class="topbar" id="accueil">
@@ -57,5 +58,6 @@ if (!empty($currentUser)) {
 					<a class="btn btn-primary" href="/annonces_immobilier/Views/login.php">Publier une annonce</a>
 				<?php endif; ?>
 			</div>
+			
 		</div>
 	</header>
