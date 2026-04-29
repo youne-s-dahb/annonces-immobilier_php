@@ -416,7 +416,7 @@ formModifier.addEventListener('submit', async (e) => {
     try {
         
         const formData = new FormData(formModifier); //FormData = Classe native JavaScript
-        const response = await fetch('Controllers/UserCtrl.php', {
+        const response = await fetch('/annonces_immobilier/Controlles/UserCtrl.php', {
             method: 'POST',
             body: formData
         });
