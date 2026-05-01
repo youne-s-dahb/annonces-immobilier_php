@@ -183,51 +183,9 @@
             }
         }
 
-        //gestion users
-
-        //recuperer user pas id et les retun sous forme de array
-
-        public function getUserById($id){
-            try{
-
-                $stmt = $this->db->prepare("SELECT * FROM user WHERE id_user = ?");
-                $stmt->execute([$id]);
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                return $result;
-            }catch(PDOException $e){
-                return null;
-            }
-        }
-
-        //list de tous les users
-
-        public function listUsers(){
-            try{
-                $stmt = $this->db->prepare("SELECT * FROM user ORDER BY id_user DESC"); //DESC: tertib mn kbir l sghir
-                $stmt->execute();
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                return $result;
-            }catch(PDOException $e){
-                return [];
-            }
-        }
-
-        //count users
-
-        public function countUser(){
-            try{
-                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM user");
-                $stmt->execute();
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                return $result['total'];
-
-            }catch(PDOException $e){
-                return 0;
-            }
-        }
-
-        //modifer profil user
-
+        
+        //modifer profil perso
+        
         public function modifierProfil($id, $nom, $prenom, $email,  $telephone){
             try{
                 $validNom = $this->validName($nom);
@@ -257,17 +215,6 @@
             }
         }
 
-        //supp user
-
-        public function suppUser($id){
-            try{
-                $stmt = $this->db->prepare("DELETE FROM user WHERE id_user = ?");
-                $stmt->execute([$id]);
-
-            }catch(PDOException $e){
-                return ['success'=>false, 'message'=>"Erreur lors de la suppression.Veuillez réessayer plus tard!!"];
-            }
-        }
         
     }
 

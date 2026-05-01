@@ -5,36 +5,27 @@ require_once(__DIR__."/../db.php");
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-
 $modelAnnonces=new annonces($db);
-<<<<<<< HEAD
 
 $lesAnnonces=$modelAnnonces->consulter();
 
 $categories=$modelAnnonces->allCategorie();
 
 $ville=$modelAnnonces->allVille();
-
-=======
 $lesAnnonces=$modelAnnonces->consulter();
 
 $categories=$modelAnnonces->allCategorie();
 $ville=$modelAnnonces->allVille();
-
-
->>>>>>> origin/dev_test
 if (isset($_POST["prix-min"]) && isset($_POST["prix-max"]) && !empty($_POST["prix-min"])) {
     //submit, katjib ghi l-annonces li m-filtrin
     $lesAnnonces = $modelAnnonces->filtrer_Prix($_POST["prix-min"], $_POST["prix-max"]);
 } else {
-<<<<<<< HEAD
     // fax ndkhel page yjib kolxy 
     $lesAnnonces = $modelAnnonces->consulter();
 }
 
 include (__DIR__."/../Views/liste.php");
-=======
+
     $lesAnnonces = $modelAnnonces->consulter();
 }
 
@@ -85,6 +76,6 @@ else{
 }
 
 
->>>>>>> origin/dev_test
+ origin/dev_test
 
 ?>

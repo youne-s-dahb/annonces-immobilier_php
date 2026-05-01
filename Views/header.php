@@ -23,7 +23,11 @@ if (!empty($currentUser)) {
 	<link rel="stylesheet" href="assets/css/style.css">
 
 	<link rel="stylesheet" href="/annonces_immobilier/assets/css/style.css">
+<<<<<<< HEAD
 
+=======
+	<link rel="stylesheet" href="/annonces_immobilier/assets/css/modifierInfo.css">
+>>>>>>> c3f6acece62ad7706ba838083c566e7388776e85
 </head>
 <body>
 	<header class="topbar" id="accueil">
@@ -65,5 +69,6 @@ if (!empty($currentUser)) {
 					<a class="btn btn-primary" href="/annonces_immobilier/Views/login.php">Publier une annonce</a>
 				<?php endif; ?>
 			</div>
+			
 		</div>
 	</header>
