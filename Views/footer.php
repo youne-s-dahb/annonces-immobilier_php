@@ -64,4 +64,8 @@
 		</div>
 	</div>
 </footer>
-<script src="assets/js/style.js"></script>
+<?php
+$__style_js_path = __DIR__ . '/../assets/js/style.js';
+$__style_js_ver = file_exists($__style_js_path) ? filemtime($__style_js_path) : time();
+?>
+<script src="/annonces_immobilier/assets/js/style.js?v=<?php echo $__style_js_ver; ?>"></script>

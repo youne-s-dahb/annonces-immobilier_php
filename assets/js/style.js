@@ -2,17 +2,38 @@ const topbarInner = document.querySelector('.topbar-inner');
 const menuToggle = document.querySelector('.menu-toggle');
 
 if (topbarInner && menuToggle) {
+	const closeTopbarMenu = () => {
+		topbarInner.classList.remove('is-open');
+		menuToggle.setAttribute('aria-expanded', 'false');
+		menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+	};
+
 	menuToggle.addEventListener('click', () => {
 		const isOpen = topbarInner.classList.toggle('is-open');
 		menuToggle.setAttribute('aria-expanded', String(isOpen));
 		menuToggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
 	});
 
+	document.addEventListener('click', (event) => {
+		if (!(event.target instanceof Element)) {
+			return;
+		}
+
+		if (!topbarInner.contains(event.target)) {
+			closeTopbarMenu();
+		}
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && topbarInner.classList.contains('is-open')) {
+			closeTopbarMenu();
+			menuToggle.focus();
+		}
+	});
+
 	window.addEventListener('resize', () => {
 		if (window.innerWidth > 680) {
-			topbarInner.classList.remove('is-open');
-			menuToggle.setAttribute('aria-expanded', 'false');
-			menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+			closeTopbarMenu();
 		}
 	});
 }
@@ -582,6 +603,110 @@ if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm
 		}
 
 		closeModal();
+	});
+}
+
+const profileActionSelectWrap = document.getElementById('profile-action-select-wrap');
+const profileActionSelectTrigger = document.getElementById('profile-action-select-trigger');
+const profileActionSelect = document.getElementById('profile-action-select');
+
+if (profileActionSelectWrap && profileActionSelectTrigger && profileActionSelect) {
+
+	let _profileSelectListenersActive = false;
+
+	const positionProfileActionSelect = () => {
+		if (!profileActionSelect || !profileActionSelectTrigger) return;
+		const triggerRect = profileActionSelectTrigger.getBoundingClientRect();
+		const selectHeight = profileActionSelect.offsetHeight || 0;
+		const spaceBelow = window.innerHeight - triggerRect.bottom;
+		const spaceAbove = triggerRect.top;
+
+		console.log('[profile-select] measure', { selectHeight, spaceBelow, spaceAbove });
+
+		if (spaceBelow < selectHeight + 8 && spaceAbove >= selectHeight + 8) {
+			profileActionSelect.classList.add('is-up');
+		} else {
+			profileActionSelect.classList.remove('is-up');
+		}
+	};
+
+	const addProfileSelectListeners = () => {
+		if (_profileSelectListenersActive) return;
+		window.addEventListener('resize', positionProfileActionSelect);
+		window.addEventListener('scroll', positionProfileActionSelect, true);
+		_profileSelectListenersActive = true;
+	};
+
+	const removeProfileSelectListeners = () => {
+		if (!_profileSelectListenersActive) return;
+		window.removeEventListener('resize', positionProfileActionSelect);
+		window.removeEventListener('scroll', positionProfileActionSelect, true);
+		_profileSelectListenersActive = false;
+	};
+
+	const closeProfileActionSelect = () => {
+		console.log('[profile-select] close');
+		profileActionSelect.hidden = true;
+		profileActionSelect.classList.remove('is-up');
+		profileActionSelect.style.visibility = '';
+		profileActionSelectWrap.classList.remove('is-open');
+		profileActionSelectTrigger.setAttribute('aria-expanded', 'false');
+		removeProfileSelectListeners();
+	};
+
+	const openProfileActionSelect = () => {
+		console.log('[profile-select] open');
+		// Make visible but hidden from view to measure available space
+		profileActionSelect.style.visibility = 'hidden';
+		profileActionSelect.hidden = false;
+
+		// Position and decide up/down
+		positionProfileActionSelect();
+
+		// Restore visibility and mark open
+		profileActionSelect.style.visibility = '';
+		profileActionSelectWrap.classList.add('is-open');
+		profileActionSelectTrigger.setAttribute('aria-expanded', 'true');
+		addProfileSelectListeners();
+	};
+
+	profileActionSelectTrigger.addEventListener('click', (event) => {
+		event.preventDefault();
+		const isOpen = profileActionSelectWrap.classList.contains('is-open');
+		if (isOpen) {
+			closeProfileActionSelect();
+		} else {
+			openProfileActionSelect();
+		}
+	});
+
+	profileActionSelect.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		if (target.closest('.profile-action-select-option')) {
+			closeProfileActionSelect();
+		}
+	});
+
+	document.addEventListener('click', (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		if (!profileActionSelectWrap.contains(target)) {
+			closeProfileActionSelect();
+		}
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && profileActionSelectWrap.classList.contains('is-open')) {
+			closeProfileActionSelect();
+			profileActionSelectTrigger.focus();
+		}
 	});
 }
 
