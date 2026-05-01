@@ -18,33 +18,6 @@
 						<input id="recherche" type="text" placeholder="Que recherchez-vous ?">
 					</label>
 
-					<div class="filter-group">
-						<p>Categorie</p>
-						<select class="select-btn select-fancy" name="categorie" id="categorie-select-native">
-							<option value="" disabled selected>Choisir categorie</option>
-							<?php foreach ($categories as $categorie): ?>
-								<option value="<?php echo htmlspecialchars($categorie["Categorie"]); ?>"><?php echo htmlspecialchars($categorie["Categorie"]); ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-
-					<div class="filter-group">
-						<p>Ville - Secteur</p>
-						<select name="ville" id="ville-select-native" class="select-btn select-fancy">
-							<option value="" disabled selected>Choisir ville</option>
-							<?php foreach ($ville as $vil): ?>
-								<option value="<?php echo htmlspecialchars($vil["nom_ville"]); ?>"><?php echo htmlspecialchars($vil["nom_ville"]); ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-
-					<div class="filter-group">
-						<p>Type </p>
-						<div class="chips">
-							<button type="button" class="chip js-type-chip" data-type="location" aria-pressed="false">Location</button>
-							<button type="button" class="chip js-type-chip" data-type="vente" aria-pressed="false">Vente</button>
-						</div>
-					</div>
 
 					<div class="filter-group">
 						<p>Prix</p>
@@ -52,7 +25,6 @@
 							
 								<input id="prix-min" type="number" inputmode="numeric" placeholder="Min" min=0 name="prix-min">
 								<input id="prix-max" type="number" inputmode="numeric" placeholder="Max" min=0 name="prix-max">
-						
 							
 						</div>
 					</div>
