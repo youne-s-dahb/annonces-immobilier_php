@@ -20,7 +20,7 @@ if (isset($_POST["prix-min"]) && isset($_POST["prix-max"]) && !empty($_POST["pri
     //submit, katjib ghi l-annonces li m-filtrin
     $lesAnnonces = $modelAnnonces->filtrer_Prix($_POST["prix-min"], $_POST["prix-max"]);
 } else {
-    // fax ndkhel page yjib kolxy 
+    // fax ndkhel   page yjib kolxy 
     $lesAnnonces = $modelAnnonces->consulter();
 }
 
