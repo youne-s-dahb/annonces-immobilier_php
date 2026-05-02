@@ -46,6 +46,29 @@ if (!empty($userAnnonces)) {
 include(__DIR__ . "/header.php");
 ?>
 
+<!-- Global data for JS (Villes & Categories) -->
+<script>
+    window.villesData = <?php echo json_encode($ville ?? [], JSON_UNESCAPED_UNICODE); ?>;
+    window.categoriesData = <?php echo json_encode($categories ?? [], JSON_UNESCAPED_UNICODE); ?>;
+    console.log('[DEBUG] Villes:', window.villesData);
+    console.log('[DEBUG] Categories:', window.categoriesData);
+</script>
+
+<!-- Message d'alerte pour success/error -->
+<?php if (!empty($_SESSION['success_message'])): ?>
+    <div class="alert alert-success" style="margin: 20px; padding: 12px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+        <strong>✓</strong> <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+    </div>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['error_message'])): ?>
+    <div class="alert alert-error" style="margin: 20px; padding: 12px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+        <strong>✗</strong> <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+    </div>
+    <?php unset($_SESSION['error_message']); ?>
+<?php endif; ?>
+
 <!-- Lier le CSS ici -->
 <link rel="stylesheet" href="../assets/css/modifierInfo.css">
 
@@ -163,6 +186,9 @@ include(__DIR__ . "/header.php");
                         ?>
                         <article
                             class="property-card profile-card"
+                            data-annonce-id="<?php echo (int)($annonce['id_annonce'] ?? 0); ?>"
+                            data-annonce-ville-id="<?php echo (int)($annonce['id_ville'] ?? 0); ?>"
+                            data-annonce-categorie-id="<?php echo (int)($annonce['id_categorie'] ?? 0); ?>"
                             data-annonce-title="<?php echo htmlspecialchars((string) $titre); ?>"
                             data-annonce-description="<?php echo htmlspecialchars((string) $description); ?>"
                             data-annonce-price="<?php echo htmlspecialchars((string) $prix); ?>"
@@ -225,11 +251,13 @@ include(__DIR__ . "/header.php");
                     <p>Choisis une action depuis les cartes ou les paramètres rapides.</p>
                     <div class="profile-modal-note">Interface front-end prête: édition et suppression en aperçu local.</div>
                 </div>
-
-                <footer class="profile-modal-foot">
-                    <button type="button" class="card-action-btn" data-profile-close="true">Fermer</button>
-                    <button type="button" class="card-action-btn primary" id="profile-modal-confirm">Valider</button>
-                </footer>
+               <form action="" method="post">
+                    <footer class="profile-modal-foot">
+                        <button type="button" type="submit" class="card-action-btn" data-profile-close="true">Fermer</button>
+                        <button type="button" type="submit" class="card-action-btn primary" id="profile-modal-confirm">Valider</button>
+                    </footer>
+               </form>                             
+                
             </section>
         </div>
 

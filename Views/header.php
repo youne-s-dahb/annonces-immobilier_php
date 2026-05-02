@@ -32,6 +32,7 @@ if (!empty($currentUser)) {
 					<span><b>Smsar </b></span>
 				</span>
 			</a>
+		
 			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu" aria-label="Ouvrir le menu">
 				<span class="menu-toggle-line" aria-hidden="true"></span>
 				<span class="menu-toggle-line" aria-hidden="true"></span>
