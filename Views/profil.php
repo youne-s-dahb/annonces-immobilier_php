@@ -71,21 +71,7 @@ include(__DIR__ . "/header.php");
                         <span class="profile-action-icon" aria-hidden="true">+</span>
                         Publier une annonce
                     </a>
-                    <div class="profile-action-select-wrap" id="profile-action-select-wrap">
-                        <button type="button" class="profile-action profile-action-select-trigger" id="profile-action-select-trigger" aria-expanded="false" aria-controls="profile-action-select">
-                            <span class="profile-action-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94a7.48 7.48 0 0 0 .05-.94 7.48 7.48 0 0 0-.05-.94l2.03-1.58a.5.5 0 0 0 .12-.63l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.84a.5.5 0 0 0-.49.42l-.36 2.54a7.28 7.28 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.7 7.85a.5.5 0 0 0 .12.63l2.03 1.58c-.03.31-.05.63-.05.94s.02.63.05.94L2.82 13.52a.5.5 0 0 0-.12.63l1.92 3.32c.13.23.4.32.6.22l2.39-.96c.51.39 1.05.7 1.63.94l.36 2.54a.5.5 0 0 0 .49.42h3.84a.5.5 0 0 0 .49-.42l.36-2.54c.58-.24 1.12-.55 1.63-.94l2.39.96c.2.1.47.01.6-.22l1.92-3.32a.5.5 0 0 0-.12-.63l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg>
-                            </span>
-                            <span>Modifier le profil</span>
-                            <span class="profile-action-select-caret" aria-hidden="true">▾</span>
-                        </button>
-
-                        <div class="profile-action-select" id="profile-action-select" hidden>
-                            <button type="button" class="profile-action-select-option" data-profile-open="edit-profile">Modifier mes infos</button>
-                            <button type="button" class="profile-action-select-option" data-profile-open="manage-annonces">Gérer mes annonces</button>
-                            <button type="button" class="profile-action-select-option" data-profile-open="favorites">Favoris et suivis</button>
-                        </div>
-                    </div>
+                 
                     <a class="profile-action" href="/annonces_immobilier/Controlles/UserCtrl.php?action=logout">
                         <span class="profile-action-icon" aria-hidden="true">↩</span>
                         Déconnexion
