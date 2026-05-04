@@ -26,7 +26,7 @@ if (isset($_POST["prix-min"]) && isset($_POST["prix-max"]) && !empty($_POST["pri
 
 include (__DIR__."/../Views/liste.php");
 
-    $lesAnnonces = $modelAnnonces->consulter();
+    $lesAnnonces = $modelAnnonces->consulter(); 
 }
 
 //parti publier annonces
@@ -58,7 +58,7 @@ elseif(isset($_GET["action"]) && $_GET["action"] == "save"){
 
                 if (move_uploaded_file($tmp_name, $destination)) {
                     // bax n liee kol image b id_annonces 
-                    $modelAnnonces->publier_image($file_name, $id_annonce);
+                    $modelAnnonces->publier_image($file_name, $id_annonce); 
                 }
             }
         }
