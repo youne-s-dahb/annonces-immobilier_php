@@ -1,0 +1,47 @@
+:root {
+  --favori-rouge: #E63946;
+  --favori-rouge-hover: #C1121F;
+  --texte-secondaire: #7B7165;
+  --surface-carte: #FFFFFF;
+}
+
+/* 1. Bouton Icon simple  */
+.btn-favori {
+  background: none;
+  border: none;
+  color: var(--texte-secondaire); 
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* fach user ydir ydo for dak l9elb */
+.btn-favori:hover {
+  color: var(--favori-rouge-hover);
+  transform: scale(1.2);
+}
+
+/* Fach luser sf ywta nit  */
+.btn-favori.is-active {
+  color: var(--favori-rouge);
+}
+
+/* 2. Bouton plein avec texte */
+.btn-favori-full {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface-carte);
+  border: 2px solid var(--favori-rouge);
+  color: var(--favori-rouge);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-favori-full:hover {
+  background-color: var(--favori-rouge);
+  color: white;
+}

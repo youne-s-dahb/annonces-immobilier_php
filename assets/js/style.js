@@ -345,6 +345,8 @@ if (propertyCards.length > 0) {
 
 	applyFilters();
 }
+<<<<<<< HEAD
+=======
 
 const profileModal = document.getElementById('profile-modal');
 const profileModalTitle = document.getElementById('profile-modal-title');
@@ -712,3 +714,4 @@ if (profileActionSelectWrap && profileActionSelectTrigger && profileActionSelect
 }
 
 
+>>>>>>> origin/dev_test

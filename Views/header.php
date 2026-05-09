@@ -20,8 +20,14 @@ if (!empty($currentUser)) {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SMSAR | Annonces Immobilieres</title>
+	<link rel="stylesheet" href="assets/css/style.css">
+
 	<link rel="stylesheet" href="/annonces_immobilier/assets/css/style.css">
+<<<<<<< HEAD
+
+=======
 	<link rel="stylesheet" href="/annonces_immobilier/assets/css/modifierInfo.css">
+>>>>>>> c3f6acece62ad7706ba838083c566e7388776e85
 </head>
 <body>
 	<header class="topbar" id="accueil">
@@ -46,6 +52,11 @@ if (!empty($currentUser)) {
 				<a href="#">Contact</a>
 			</nav>
 			<div class="topbar-actions">
+				<a class="btn btn-light" href="#">Se connecter</a>
+				<a class="btn btn-primary" href="#">Publier une annonce</a>
+				<a class="btn btn-register" href="#">S'inscrire</a>
+				<a class="btn btn-primary" href="Controlles/AnnoncesCtrl.php?action=publier_ann">Publier une annonce</a>
+
 				<?php if (!empty($currentUser)): ?>
 					<a class="btn btn-profile-royal" href="/annonces_immobilier/Controlles/UserCtrl.php?action=profil">
 						<span class="profile-chip-dot" aria-hidden="true"><?php echo htmlspecialchars($userInitial); ?></span>

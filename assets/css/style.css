@@ -194,6 +194,7 @@ input {
 	color: var(--text);
 }
 
+
 .btn-profile-royal {
 	border-radius: 999px;
 	padding: 8px 14px 8px 9px;
@@ -925,6 +926,7 @@ input {
 	padding-top: 8px;
 }
 
+
 .auth-page {
 	position: relative;
 	padding: 36px 0 48px;
@@ -1428,6 +1430,7 @@ input {
 		align-items: flex-start;
 	}
 
+
 	.auth-page {
 		padding-top: 22px;
 	}
@@ -1689,6 +1692,8 @@ input {
 		font-size: 0.9rem;
 	}
 }
+ 
+
 
 /* ==================== AUTH LAYOUT ==================== */
 
