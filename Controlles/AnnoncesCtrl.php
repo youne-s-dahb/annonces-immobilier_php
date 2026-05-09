@@ -53,7 +53,7 @@ if (isset($_POST["prix-min"]) && isset($_POST["prix-max"]) && !empty($_POST["pri
 include (__DIR__."/../Views/liste.php");
 
     $lesAnnonces = $modelAnnonces->consulter(); 
-}
+
 
 //parti publier annonces
 if(isset($_GET["action"]) && $_GET["action"] == "publier_ann" ){
