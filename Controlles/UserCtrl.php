@@ -181,6 +181,8 @@ class UserController {
     private function handleProfil(): void {
         $currentUser = $this->getCurrentUser();
         $userAnnonces = $this->annonceModel->consulterParUser((int) $currentUser['id_user']);
+        $ville = $this->annonceModel->allVille();
+        $categories = $this->annonceModel->allCategorie();
         
         include(__DIR__ . "/../Views/profil.php");
         exit();

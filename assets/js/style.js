@@ -369,6 +369,9 @@ if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm
 	};
 
 	const getCardData = (card) => ({
+		id: card?.dataset.annonceId || '',
+		villeId: card?.dataset.annonceVilleId || '',
+		categorieId: card?.dataset.annonceCategorieId || '',
 		title: card?.dataset.annonceTitle || 'Annonce',
 		description: card?.dataset.annonceDescription || '',
 		price: card?.dataset.annoncePrice || '',
@@ -433,37 +436,66 @@ if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm
 
 		if (currentMode === 'edit-annonce') {
 			profileModalTitle.textContent = 'Modifier l\'annonce';
+			
+			// Build villes select options
+			let villesOptions = '<option value="">Choisir une ville...</option>';
+			if (window.villesData && Array.isArray(window.villesData)) {
+				window.villesData.forEach(v => {
+					const selected = String(data.villeId) === String(v.id_ville) ? 'selected' : '';
+					villesOptions += `<option value="${v.id_ville}" ${selected}>${escapeHtml(v.nom_ville)}</option>`;
+				});
+			}
+			
+			// Build categories select options
+			let categoriesOptions = '<option value="">Choisir une categorie...</option>';
+			if (window.categoriesData && Array.isArray(window.categoriesData)) {
+				window.categoriesData.forEach(c => {
+					const selected = String(data.categorieId) === String(c.id_categorie) ? 'selected' : '';
+					categoriesOptions += `<option value="${c.id_categorie}" ${selected}>${escapeHtml(c.Categorie)}</option>`;
+				});
+			}
+			
 			profileModalBody.innerHTML = `
-				<p>Édite l'annonce: <strong>${escapeHtml(data.title)}</strong></p>
-				<div class="profile-modal-form">
-					<div class="field full">
-						<label for="annonce-title">Titre</label>
-						<input id="annonce-title" type="text" value="${escapeHtml(data.title)}" />
+				<form id="edit-annonce-form" method="POST" action="/annonces_immobilier/Controlles/AnnoncesCtrl.php?action=update_annonce">
+					<input type="hidden" name="id_annonce" value="${data.id}" />
+					<p>Édite l'annonce: <strong>${escapeHtml(data.title)}</strong></p>
+					<div class="profile-modal-form">
+						<div class="field full">
+							<label for="annonce-title">Titre</label>
+							<input id="annonce-title" name="titre" type="text" value="${escapeHtml(data.title)}" required />
+						</div>
+						<div class="field full">
+							<label for="annonce-description">Description</label>
+							<textarea id="annonce-description" name="description" required>${escapeHtml(data.description)}</textarea>
+						</div>
+						<div class="field">
+							<label for="annonce-price">Prix (DH)</label>
+							<input id="annonce-price" name="prix" type="number" value="${escapeHtml(data.price)}" required />
+						</div>
+						<div class="field">
+							<label for="annonce-type">Type</label>
+							<select id="annonce-type" name="type" required>
+								<option value="Vendre" ${data.type === 'Vendre' ? 'selected' : ''}>Vendre</option>
+								<option value="Louer" ${data.type === 'Louer' ? 'selected' : ''}>Louer</option>
+							</select>
+						</div>
+						<div class="field">
+							<label for="annonce-ville">Ville</label>
+							<select id="annonce-ville" name="id_ville" required>
+								${villesOptions}
+							</select>
+						</div>
+						<div class="field">
+							<label for="annonce-categorie">Categorie</label>
+							<select id="annonce-categorie" name="id_categorie" required>
+								${categoriesOptions}
+							</select>
+						</div>
 					</div>
-					<div class="field full">
-						<label for="annonce-description">Description</label>
-						<textarea id="annonce-description">${escapeHtml(data.description)}</textarea>
-					</div>
-					<div class="field">
-						<label for="annonce-price">Prix (DH)</label>
-						<input id="annonce-price" type="number" value="${escapeHtml(data.price)}" />
-					</div>
-					<div class="field">
-						<label for="annonce-type">Type</label>
-						<input id="annonce-type" type="text" value="${escapeHtml(data.type)}" />
-					</div>
-					<div class="field">
-						<label for="annonce-ville">Ville</label>
-						<input id="annonce-ville" type="text" value="${escapeHtml(data.ville)}" />
-					</div>
-					<div class="field">
-						<label for="annonce-categorie">Categorie</label>
-						<input id="annonce-categorie" type="text" value="${escapeHtml(data.categorie)}" />
-					</div>
-				</div>
-				<div class="profile-modal-note">Preview only: ghi UI update, ma kaynch save backend daba.</div>
+				</form>
+				<div class="profile-modal-note">Les modifications seront enregistrées dans la base de données.</div>
 			`;
-			profileModalConfirm.textContent = 'Appliquer';
+			profileModalConfirm.textContent = 'Enregistrer';
 			profileModalConfirm.classList.remove('danger');
 			return;
 		}
@@ -472,7 +504,10 @@ if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm
 		profileModalBody.innerHTML = `
 			<p>Kathemm b supprimer had l'annonce:</p>
 			<p><strong>${escapeHtml(data.title)}</strong></p>
-			<div class="profile-modal-note warn">Front-end only: ghadi nmaski card locally, sans suppression DB.</div>
+			<form id="delete-annonce-form" method="POST" action="/annonces_immobilier/Controlles/AnnoncesCtrl.php?action=delete_annonce">
+				<input type="hidden" name="id_annonce" value="${data.id}" />
+			</form>
+			<div class="profile-modal-note warn">Cette action supprimera l'annonce de la base de données.</div>
 		`;
 		profileModalConfirm.textContent = 'Supprimer';
 		profileModalConfirm.classList.add('danger');
@@ -553,54 +588,20 @@ if (profileModal && profileModalTitle && profileModalBody && profileModalConfirm
 		}
 
 		if (currentMode === 'delete-annonce' && currentCard) {
-			currentCard.classList.add('is-pending-delete');
+			const form = document.getElementById('delete-annonce-form');
+			if (form) {
+				form.submit();
+				return;
+			}
 		}
 
-		if (currentMode === 'edit-annonce' && currentCard) {
-			const titleInput = document.getElementById('annonce-title');
-			const descriptionInput = document.getElementById('annonce-description');
-			const priceInput = document.getElementById('annonce-price');
-			const typeInput = document.getElementById('annonce-type');
-			const villeInput = document.getElementById('annonce-ville');
-			const categorieInput = document.getElementById('annonce-categorie');
-
-			const title = titleInput?.value?.trim() || currentCard.dataset.annonceTitle || '';
-			const description = descriptionInput?.value?.trim() || currentCard.dataset.annonceDescription || '';
-			const price = priceInput?.value?.trim() || currentCard.dataset.annoncePrice || '';
-			const type = typeInput?.value?.trim() || currentCard.dataset.annonceType || '';
-			const ville = villeInput?.value?.trim() || currentCard.dataset.annonceVille || '';
-			const categorie = categorieInput?.value?.trim() || currentCard.dataset.annonceCategorie || '';
-
-			currentCard.dataset.annonceTitle = title;
-			currentCard.dataset.annonceDescription = description;
-			currentCard.dataset.annoncePrice = price;
-			currentCard.dataset.annonceType = type;
-			currentCard.dataset.annonceVille = ville;
-			currentCard.dataset.annonceCategorie = categorie;
-
-			const cardTitle = currentCard.querySelector('.card-body h3');
-			const cardDescription = currentCard.querySelector('.card-description');
-			const cardPrice = currentCard.querySelector('.profile-price-pill');
-			const cardType = currentCard.querySelector('.type-badge');
-			const meta = currentCard.querySelectorAll('.profile-meta span');
-
-			if (cardTitle) {
-				cardTitle.textContent = title || 'Annonce';
-			}
-			if (cardDescription) {
-				cardDescription.textContent = description;
-			}
-			if (cardPrice) {
-				cardPrice.textContent = `${price || '0'} DH`;
-			}
-			if (cardType) {
-				cardType.textContent = type;
-			}
-			if (meta[0]) {
-				meta[0].textContent = `Ville : ${ville}`;
-			}
-			if (meta[1]) {
-				meta[1].textContent = `Categorie : ${categorie}`;
+		if (currentMode === 'edit-annonce') {
+			const form = document.getElementById('edit-annonce-form');
+			console.log('[DEBUG] edit-annonce mode, form:', form ? 'found' : 'NOT FOUND');
+			if (form) {
+				console.log('[DEBUG] Submitting form with action:', form.action);
+				form.submit();
+				return;
 			}
 		}
 

@@ -132,7 +132,7 @@
                 }
                 
                 //hash password
-                $hashedPass = password_hash($password, PASSWORD_BCRYPT); //  password_hash(): fonction li katdir hashing sécurisé, PASSWORD_BCRYPT: protection contre rute force 
+                //$hashedPass = password_hash($password, PASSWORD_BCRYPT); //  password_hash(): fonction li katdir hashing sécurisé, PASSWORD_BCRYPT: protection contre rute force 
 
                 //add user
                 $stmt = $this->db->prepare("INSERT INTO user (Nom, Prenom, Gmail, Password, Telephone) VALUES (?,?,?,?,?)");
@@ -142,7 +142,7 @@
                     trim($nom),
                     trim($prenom),
                     trim($email),
-                    $hashedPass,
+                    $password,
                     trim($telephone)
                 ]);
                 
@@ -162,9 +162,9 @@
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC); //katjib ligne whda mn DB en tant que tableau associatif
 
-                $storedPassword = $user['Pasword'] ?? ($user['Password'] ?? '');
+                $storedPassword = $user['Password'] ?? ($user['Password'] ?? '');
 
-                if(!$user || !password_verify($password, $storedPassword)){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
+                if(!$user || $password!==$user["Password"]){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
                     return ['success'=> false, 'message'=> "Email ou mot de passe incorrect!"];
                 }
 

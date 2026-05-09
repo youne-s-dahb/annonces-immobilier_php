@@ -6,6 +6,10 @@ class annonces{
     public function __construct($db) {
         $this->db = $db;
     }
+    
+    public function getDb() {
+        return $this->db;
+    }
 
     public function consulter(){
         $sql = "SELECT 
@@ -146,6 +150,52 @@ class annonces{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function modifier_annonces($id, $titre, $description, $prix, $type, $id_ville, $id_categorie){
+        try{
+            if (!$id_ville || !$id_categorie) {
+                return ['success' => false, 'message' => 'Ville ou categorie non trouvee'];
+            }
+            
+            $sql ="UPDATE `annonce` SET Titre=?, Description=?, Prix=?, Type=?, id_ville=?, id_categorie=? WHERE id_annonce=?";
+          $stmt=$this->db->prepare($sql);
+          $result = $stmt->execute([$titre, $description, (float)$prix, $type, (int)$id_ville, (int)$id_categorie, (int)$id]);
+          
+          if ($result && $stmt->rowCount() > 0) {
+            return ['success' => true, 'message' => 'Annonce modifiee avec succes'];
+        } else {
+            return ['success' => false, 'message' => 'Erreur ou annonce non trouvee'];
+        }
+        }catch (PDOException $e) {
+                return ['success' => false, 'message' => 'Erreur: ' . $e->getMessage()];
+        }
+          
+
+    }
+    public function Supprimer_annonce($id_annonce, $id_user = null){
+          try {
+              if (!$id_annonce) {
+                  return ['success' => false, 'message' => 'Annonce introuvable'];
+              }
+
+              if ($id_user) {
+                  $sql = "DELETE FROM `annonce` WHERE id_annonce = ? AND id_user = ?";
+                  $stmt = $this->db->prepare($sql);
+                  $result = $stmt->execute([(int)$id_annonce, (int)$id_user]);
+              } else {
+                  $sql = "DELETE FROM `annonce` WHERE id_annonce = ?";
+                  $stmt = $this->db->prepare($sql);
+                  $result = $stmt->execute([(int)$id_annonce]);
+              }
+
+              if ($result && $stmt->rowCount() > 0) {
+                  return ['success' => true, 'message' => 'Annonce supprimée avec succès'];
+              }
+
+              return ['success' => false, 'message' => 'Annonce non trouvée ou suppression refusée'];
+          } catch (PDOException $e) {
+              return ['success' => false, 'message' => 'Erreur: ' . $e->getMessage()];
+          }
+    }
    
  origin/dev_test
 

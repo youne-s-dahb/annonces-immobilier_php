@@ -17,6 +17,6 @@ $mesFavoris = $favorieModel->consulter_list_favorie($id_user);
 //exécuter et de stocker le résultat 
 
 
-// Et on appelle la vue pour afficher tout ça
+// Et on appelle la vue pour afficher tout  ça
 include '../Views/liste.php'; 
 ?>
