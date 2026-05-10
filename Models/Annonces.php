@@ -169,6 +169,6 @@ class annonces{
     }
    
 
-}
+}  
 
 ?>
