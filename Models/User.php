@@ -1,0 +1,221 @@
+<?php
+
+    class User{
+        private $db;
+        public function __construct($cnx)
+        {
+            $this->db = $cnx;
+        }
+
+        //Valdation email:
+
+        public function validEmail($email){
+            $patternEmail = "/^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/";
+            if(!preg_match($patternEmail, $email)){
+                return ['valid'=>false, 'message'=>"Format email invalide!"];
+            }
+            return['valid'=>true];
+        }
+        //si email deja kayn:
+        public function emailExist($email){
+            $stmt = $this->db->prepare("SELECT id_user FROM user WHERE Gmail = ?");
+            $stmt->execute([$email]);
+            return $stmt->rowCount() > 0; //rowCount: return le nombre des lignes trouvées/affectés par la requete sql
+
+        }
+
+        //-------------------------------------------
+
+        //validation password
+
+        public function validPass($password){
+            $errors = [];
+            if(strlen($password) < 8){
+                $errors[] = "Minimum 8 caractères!!";
+            }
+            if(!preg_match('/[a-z]/', $password)){
+                $errors[] = "Le mot de passe doit contenir minimum une lettre miniscule!!";
+            }
+            if(!preg_match('/[A-Z]/', $password)){
+                $errors[] = "Le mot de passe doit contenir minimum une lettre majuscule!!";
+            }
+            if(!preg_match('/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}/', $password)){
+                $errors[] = "Le mot de passe doit contenir au moin un caractère speciale(!@#$%^&*...)";
+            }
+
+            if(!empty($errors)){
+                return['valid'=>false, 'errors'=>$errors];
+            }
+            return ['valid'=> true];
+        }
+
+        //-----------------------------------------------
+        //validation nom et prenom
+
+        public function validName($name){
+            $name = trim($name);
+            $taille = strlen($name);
+            $errors =[];
+
+            if($taille < 3){
+                $errors[] = "Le nom/prénom doit contenir minimum 3 caractères!";
+            }
+            if($taille > 40){
+                $errors[] = "Le nom/prénom doit contenir maximum 40 caractères!";
+            }
+            if(!preg_match('/^[a-zA-ZÀ-ÿ\s\-\']+$/', $name)){  //lettres + espaces
+                $errors[] = "Caractères invalide!(Lettres et espaces uniquement)";
+
+            }
+
+            if(!empty($errors)){
+                return['valid' => false, 'errors'=>$errors];
+            }
+            
+            return ['valid' => true];
+                        
+        }
+
+        //-------------------------------------------------
+        //validation telephone
+
+        public function validTele($telephone){
+            $telephone = trim($telephone);
+
+            $pattern = '/^^[0][5-7][0-9]{8}$/';
+
+            if(!preg_match($pattern, $telephone)){
+                return['valid'=>false, 'message'=>"Le numéro de téléphone doit commencer par  05, 06 ou 07 et contenir exactement 10 chiffres!!"];
+            
+            }
+            return ['valid'=>true];
+
+        }
+
+        //-------------------------------------------------
+        //s'inscrire
+
+        public function register($nom, $prenom, $email, $password, $telephone){
+            try{
+                //valider les champs
+                $validNom = $this->validName($nom);
+                $validPre = $this->validName($prenom);
+                $validEmail = $this->validEmail($email);
+                $validPhone = $this->validTele($telephone);
+                $validPassword = $this->validPass($password);
+
+                $errors = [];
+
+                if(!$validNom['valid']){
+                    $errors[] = 'Nom: ' . $validNom['message'];
+                }
+                if (!$validPre['valid']){
+                    $errors[] = 'Prénom: ' . $validPre['message'];
+                } 
+                if (!$validEmail['valid']){
+                    $errors[] = $validEmail['message'];
+                } 
+                if (!$validPhone['valid']){
+                    $errors[] = 'Téléphone: ' . $validPhone['message'];
+                } 
+                if (!$validPassword['valid']) {
+                    foreach ($validPassword['errors'] as $error) {
+                        $errors[] = $error;
+                    }
+                }
+
+                if($this->emailExist($email)){
+                    $errors[] = "Email exist deja!";
+                }
+                if(!empty($errors)){
+                    return['valid' => false, 'errors'=>$errors];
+                }
+                
+                //hash password
+                //$hashedPass = password_hash($password, PASSWORD_BCRYPT); //  password_hash(): fonction li katdir hashing sécurisé, PASSWORD_BCRYPT: protection contre rute force 
+
+                //add user
+                $stmt = $this->db->prepare("INSERT INTO user (Nom, Prenom, Gmail, Password, Telephone) VALUES (?,?,?,?,?)");
+
+                //remplacer ? par les valeurs
+                $stmt->execute([
+                    trim($nom),
+                    trim($prenom),
+                    trim($email),
+                    $password,
+                    trim($telephone)
+                ]);
+                
+                return ['success'=>true, 'message'=>'Inscription réussite'];
+
+            }catch(PDOException $e){
+                return['success'=>false, 'message'=>"Erreur lors de l'inscription. Veuillez réessayer plus tard"];  //$e.->getMessage()
+            }
+        }
+
+        //login
+
+        public function login($email, $password){
+            try{
+                $stmt = $this->db->prepare("SELECT * FROM user where Gmail = ?");
+                $stmt->execute([trim($email)]);
+
+                $user = $stmt->fetch(PDO::FETCH_ASSOC); //katjib ligne whda mn DB en tant que tableau associatif
+
+                $storedPassword = $user['Password'] ?? ($user['Password'] ?? '');
+
+                if(!$user || $password!==$user["Password"]){  //password_verify: compare entre pass li dokhlo user w li kayn f DB
+                    return ['success'=> false, 'message'=> "Email ou mot de passe incorrect!"];
+                }
+
+                //kolchi s7i7: return infos user
+
+                return ['success'=>true, 'user'=> [
+                    'id_user'=>$user['id_user'],
+                    'nom'=>$user['Nom'] ?? '',
+                    'prenom'=>$user['Prenom'] ?? '',
+                    'email'=>$user['Gmail'] ?? '',
+                    'telephone'=>$user['Telephone'] ?? ''
+                ]];
+
+            }catch(PDOException $e){
+                return ['success'=>false, 'message'=>"Erreur ors de la conexion.Veuillez réessayer plus tard!"];
+            }
+        }
+
+        
+        //modifer profil perso
+        
+        public function modifierProfil($id, $nom, $prenom, $email,  $telephone){
+            try{
+                $validNom = $this->validName($nom);
+                $validPre = $this->validName($prenom);
+                $validEmail = $this->validEmail($email);
+                $validPhone = $this->validTele($telephone);
+
+                //verifier wach ga3 les données dial user correct
+                if(!$validNom['valid'] || !$validPre['valid'] || !$validEmail['valid'] || !$validPhone['valid'] ){
+                    return ['success'=>false, 'message'=>"Données non valide!"];
+                }
+
+                $stmt = $this->db->prepare("UPDATE user SET Nom = ?, Prenom = ?, Gmail = ?, Telephone = ? WHERE id_user = ?");
+
+                $stmt->execute([
+                    trim($nom),
+                    trim($prenom),
+                    trim($email),
+                    trim($telephone),
+                    $id
+                ]);
+
+                return ['success'=>true, 'message'=>"Profil mis a jour avec succés"];
+
+            }catch(PDOException $e){
+                return ['success'=>false, 'message'=>"Erreur lors de la mofication.Veuillez réessayer plus tard!!"];
+            }
+        }
+
+        
+    }
+
+?>

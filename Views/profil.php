@@ -1,0 +1,500 @@
+<?php
+if (!isset($currentUser)) {
+    $currentUser = $_SESSION['user'] ?? null;
+}
+
+if (!isset($userAnnonces)) {
+    $userAnnonces = [];
+}
+
+$resolveImageSrc = static function (string $image): string {
+    $cleanImage = trim($image);
+
+    if ($cleanImage === '') {
+        return '';
+    }
+
+    if (preg_match('/^(https?:\/\/|\/)/i', $cleanImage) === 1) {
+        return $cleanImage;
+    }
+
+    if (strpos($cleanImage, 'assets/img/') === 0) {
+        return '/annonces_immobilier/' . $cleanImage;
+    }
+
+    return '/annonces_immobilier/assets/img/' . $cleanImage;
+};
+
+$fullName = trim(($currentUser['nom'] ?? '') . ' ' . ($currentUser['prenom'] ?? ''));
+if ($fullName === '') {
+    $fullName = 'Mon compte';
+}
+
+$userInitial = strtoupper(substr($fullName, 0, 1));
+$isAdmin = strtolower((string) ($currentUser['role'] ?? 'user')) === 'admin';
+$publishedCount = count($userAnnonces);
+$latestLabel = 'Aucune annonce pour le moment';
+
+if (!empty($userAnnonces)) {
+    $latestRawDate = $userAnnonces[0]['Date_publication'] ?? $userAnnonces[0]['Date_Publication'] ?? '';
+    $latestTimestamp = strtotime((string) $latestRawDate);
+    if ($latestTimestamp !== false) {
+        $latestLabel = date('d/m/Y', $latestTimestamp);
+    }
+}
+
+include(__DIR__ . "/header.php");
+?>
+
+<!-- Global data for JS (Villes & Categories) -->
+<script>
+    window.villesData = <?php echo json_encode($ville ?? [], JSON_UNESCAPED_UNICODE); ?>;
+    window.categoriesData = <?php echo json_encode($categories ?? [], JSON_UNESCAPED_UNICODE); ?>;
+    console.log('[DEBUG] Villes:', window.villesData);
+    console.log('[DEBUG] Categories:', window.categoriesData);
+</script>
+
+<!-- Message d'alerte pour success/error -->
+<?php if (!empty($_SESSION['success_message'])): ?>
+    <div class="alert alert-success" style="margin: 20px; padding: 12px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+        <strong>✓</strong> <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+    </div>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['error_message'])): ?>
+    <div class="alert alert-error" style="margin: 20px; padding: 12px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+        <strong>✗</strong> <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+    </div>
+    <?php unset($_SESSION['error_message']); ?>
+<?php endif; ?>
+
+<!-- Lier le CSS ici -->
+<link rel="stylesheet" href="../assets/css/modifierInfo.css">
+
+<main class="page-shell">
+    <div class="container listing-layout profile-layout">
+        <section class="results-panel profile-panel" aria-label="Profil utilisateur">
+            <div class="profile-hero">
+                <div class="profile-hero-main">
+                    <div class="profile-avatar" aria-hidden="true"><?php echo htmlspecialchars($userInitial); ?></div>
+                    <div class="profile-copy">
+                        <p class="profile-kicker">Espace personnel</p>
+                        <h1><?php echo htmlspecialchars($fullName); ?></h1>
+                        <p><?php echo htmlspecialchars($currentUser['email'] ?? ''); ?></p>
+                        <div class="profile-badges">
+                            <span class="profile-badge">Compte <?php echo $isAdmin ? 'admin' : 'user'; ?></span>
+                            <span class="profile-badge profile-badge-soft"><?php echo $publishedCount; ?> annonces</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-hero-actions">
+                    <a class="profile-action profile-action-primary" href="/annonces_immobilier/Controlles/AnnoncesCtrl.php?action=publier_ann">
+                        <span class="profile-action-icon" aria-hidden="true">+</span>
+                        Publier une annonce
+                    </a>
+                 
+                    <a class="profile-action" href="/annonces_immobilier/Controlles/UserCtrl.php?action=logout">
+                        <span class="profile-action-icon" aria-hidden="true">↩</span>
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <article class="profile-stat-card">
+                    <span class="profile-stat-label">Annonces publiées</span>
+                    <strong><?php echo $publishedCount; ?></strong>
+                </article>
+                <article class="profile-stat-card">
+                    <span class="profile-stat-label">Dernière activité</span>
+                    <strong><?php echo htmlspecialchars($latestLabel); ?></strong>
+                </article>
+                <article class="profile-stat-card">
+                    <span class="profile-stat-label">Téléphone</span>
+                    <strong><?php echo htmlspecialchars($currentUser['telephone'] ?? ''); ?></strong>
+                </article>
+            </div>
+
+            <section class="profile-settings" id="profile-settings" aria-label="Paramètres du compte">
+                <div class="results-head profile-section-head">
+                    <div>
+                        <h2>Paramètres rapides</h2>
+                        <p>Modifier, gérer et organiser ton espace annonceur.</p>
+                    </div>
+                </div>
+
+                <div class="profile-settings-grid">
+
+                    <!-- BOUTON MODIFIER INFOS -->
+                    <button type="button" class="profile-settings-card profile-settings-card-btn" id="btn-open-modifier-infos">
+                        <span class="profile-settings-icon" aria-hidden="true">✎</span>
+                        <strong>Modifier mes informations personnel</strong>
+                        <span>Nom, email, téléphone</span>
+                    </button>
+
+                    <button type="button" class="profile-settings-card profile-settings-card-btn" data-profile-open="manage-annonces">
+                        <span class="profile-settings-icon" aria-hidden="true">☰</span>
+                        <strong>Gérer mes annonces</strong>
+                        <span>Voir, éditer ou supprimer</span>
+                    </button>
+                
+                    <button type="button" class="profile-settings-card profile-settings-card-btn" data-profile-open="favorites">
+                        <span class="profile-settings-icon" aria-hidden="true">★</span>
+                        <strong>Favoris et suivis</strong>
+                        <span>Accès rapide aux biens gardés</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="results-head profile-section-head">
+                <div>
+                    <h2>Mes annonces</h2>
+                    <p><?php echo $publishedCount; ?> annonce(s) prête(s) à être gérée(s)</p>
+                </div>
+            </div>
+            <!-- ______________________________________________________________________________ -->
+            <form action="" method="POST">
+            <div class="cards-grid profile-cards-grid">
+              
+                <?php if (empty($userAnnonces)): ?>
+                    <article class="property-card empty-state-card">
+                        <div class="card-body">
+                            <div class="empty-state-illus" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 2 2 7v15h20V7Zm0 2.3L18.4 7 12 11.1 5.6 7ZM4 9.6l7 4.5v8H4Zm9 12.5v-8l7-4.5v12.5Z"/></svg>
+                            </div>
+                            <h3>Aucune annonce publiée</h3>
+                            <p>Le tableau est vide pour l'instant. Publie une annonce pour remplir ton espace personnel.</p>
+                            <div class="card-actions">
+                                <a class="card-action-btn primary" href="/annonces_immobilier/Controlles/AnnoncesCtrl.php?action=publier_ann">Créer une annonce</a>
+                            </div>
+                        </div>
+                    </article>
+                <?php else: ?>
+                    <?php foreach ($userAnnonces as $annonce): ?>
+                        <?php
+                            $titre = $annonce['Titre'] ?? 'Bien immobilier';
+                            $description = $annonce['Description'] ?? '';
+                            $prix = $annonce['Prix'] ?? 0;
+                            $type = $annonce['Type'] ?? '';
+                            $ville = $annonce['nom_ville'] ?? '';
+                            $categorie = $annonce['Categorie'] ?? '';
+                            $datePublication = $annonce['Date_publication'] ?? $annonce['Date_Publication'] ?? '';
+                            $images = array_filter(array_map('trim', explode(',', (string) ($annonce['url_image'] ?? ''))));
+                            $image = $images[0] ?? '';
+                        ?>
+                        <article
+                            class="property-card profile-card"
+                            data-annonce-id="<?php echo (int)($annonce['id_annonce'] ?? 0); ?>"
+                            data-annonce-ville-id="<?php echo (int)($annonce['id_ville'] ?? 0); ?>"
+                            data-annonce-categorie-id="<?php echo (int)($annonce['id_categorie'] ?? 0); ?>"
+                            data-annonce-title="<?php echo htmlspecialchars((string) $titre); ?>"
+                            data-annonce-description="<?php echo htmlspecialchars((string) $description); ?>"
+                            data-annonce-price="<?php echo htmlspecialchars((string) $prix); ?>"
+                            data-annonce-type="<?php echo htmlspecialchars((string) $type); ?>"
+                            data-annonce-ville="<?php echo htmlspecialchars((string) $ville); ?>"
+                            data-annonce-categorie="<?php echo htmlspecialchars((string) $categorie); ?>"
+                        >
+                            <div class="card-media profile-card-media">
+                                <?php if ($image !== ''): ?>
+                                    <img src="<?php echo htmlspecialchars($resolveImageSrc($image)); ?>" alt="<?php echo htmlspecialchars($titre); ?>" class="card-image" loading="lazy">
+                                <?php else: ?>
+                                    <div class="media-empty">Aucune image</div>
+                                <?php endif; ?>
+                                <div class="profile-card-topbar">
+                                    <span class="publish-badge"><?php echo htmlspecialchars((string) $datePublication); ?></span>
+                                    <div class="profile-card-icons">
+                                        <button type="button" class="profile-icon-btn" data-profile-open="edit-annonce" aria-label="Modifier l'annonce">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17.3 11.7-11.7 3.7 3.7L6.7 21H3Zm15.5-13.5 1.7-1.7a1.4 1.4 0 0 1 2 0l.7.7a1.4 1.4 0 0 1 0 2L21.2 6Z"/></svg>
+                                        </button>
+                                        <button type="button" class="profile-icon-btn danger" data-profile-open="delete-annonce" aria-label="Supprimer l'annonce">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4ZM6 9h12l-1 12H7L6 9Zm4 2v8h2v-8Zm4 0v8h2v-8Z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-publish-row">
+                                    <span class="type-badge"><?php echo htmlspecialchars((string) $type); ?></span>
+                                    <span class="profile-price-pill"><?php echo htmlspecialchars((string) $prix); ?> DH</span>
+                                </div>
+                                <h3><?php echo htmlspecialchars($titre); ?></h3>
+                                <p class="card-description"><?php echo htmlspecialchars($description); ?></p>
+                                <div class="meta profile-meta">
+                                    <span>Ville : <?php echo htmlspecialchars((string) $ville); ?></span>
+                                    <span>Categorie : <?php echo htmlspecialchars((string) $categorie); ?></span>
+                                </div>
+                                <div class="card-actions">
+                                    <button type="button" class="card-action-btn" data-profile-open="edit-annonce">Modifier</button>
+                                    <button type="button" class="card-action-btn danger" data-profile-open="delete-annonce">Supprimer</button>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            </form>
+            <!-- ________________________________________________________________________ -->
+           
+        </section>
+
+        <div class="profile-modal" id="profile-modal" aria-hidden="true" hidden>
+            <div class="profile-modal-backdrop" data-profile-close="true"></div>
+            <section class="profile-modal-content" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+                <header class="profile-modal-head">
+                    <h3 id="profile-modal-title">Action profil</h3>
+                    <button type="button" class="profile-modal-close" data-profile-close="true" aria-label="Fermer">×</button>
+                </header>
+
+                <div class="profile-modal-body" id="profile-modal-body">
+                    <p>Choisis une action depuis les cartes ou les paramètres rapides.</p>
+                    <div class="profile-modal-note">Interface front-end prête: édition et suppression en aperçu local.</div>
+                </div>
+               <form action="" method="post">
+                    <footer class="profile-modal-foot">
+                        <button type="button" type="submit" class="card-action-btn" data-profile-close="true">Fermer</button>
+                        <button type="button" type="submit" class="card-action-btn primary" id="profile-modal-confirm">Valider</button>
+                    </footer>
+               </form>                             
+                
+            </section>
+        </div>
+
+        <!-- ================== MODAL MODIFIER INFOS ================== -->
+        <div class="modal-modifier-infos" id="modal-modifier-infos">
+            <div class="modal-modifier-content">
+                <!-- En-tête modal -->
+                <div class="modal-modifier-header">
+                    <h2>Modifier mes informations</h2>
+                    <button type="button" class="modal-close-btn" id="close-modal-btn">×</button>
+                </div>
+
+                <!-- Alertes -->
+                <div id="modifier-alerts-container"></div>
+
+                <!-- Formulaire -->
+                <form method="POST" class="modifier-form" id="modifier-form">
+                    <input type="hidden" name="action" value="update_profil">
+
+                    <!-- Nom -->
+                    <div class="form-group">
+                        <label for="modifier-nom">Nom</label>
+                        <input
+                            type="text"
+                            id="modifier-nom"
+                            name="nom"
+                            class="form-input"
+                            placeholder="Dupont"
+                            required
+                            minlength="3"
+                            maxlength="30"
+                            value="<?php echo htmlspecialchars($currentUser['nom'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="form-group">
+                        <label for="modifier-prenom">Prénom</label>
+                        <input
+                            type="text"
+                            id="modifier-prenom"
+                            name="prenom"
+                            class="form-input"
+                            placeholder="Jean"
+                            required
+                            minlength="3"
+                            maxlength="30"
+                            value="<?php echo htmlspecialchars($currentUser['prenom'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="modifier-email">Email</label>
+                        <input
+                            type="email"
+                            id="modifier-email"
+                            name="email"
+                            class="form-input"
+                            placeholder="votre@email.com"
+                            required
+                            value="<?php echo htmlspecialchars($currentUser['email'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="form-group">
+                        <label for="modifier-telephone">Téléphone</label>
+                        <input
+                            type="tel"
+                            id="modifier-telephone"
+                            name="telephone"
+                            class="form-input"
+                            placeholder="+212 612345678"
+                            required
+                            value="<?php echo htmlspecialchars($currentUser['telephone'] ?? ''); ?>"
+                        >
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="modifier-form-actions">
+                        <button type="submit" class="btn-modifier-save" id="btn-modifier-save">
+                            Enregistrer les modifications
+                        </button>
+                        <button type="button" class="btn-modifier-cancel" id="btn-modifier-cancel">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- ================== FIN MODAL ================== -->
+
+    </div>
+</main>
+
+<script>
+// ==================== GESTION MODAL ==================== 
+
+const modalModifier = document.getElementById('modal-modifier-infos');
+const btnOpenModifier = document.getElementById('btn-open-modifier-infos');
+const btnCloseModal = document.getElementById('close-modal-btn');
+const btnCancelModifier = document.getElementById('btn-modifier-cancel');
+const formModifier = document.getElementById('modifier-form');
+const btnSave = document.getElementById('btn-modifier-save');
+const alertsContainer = document.getElementById('modifier-alerts-container');
+
+// Ouvrir la modal
+btnOpenModifier.addEventListener('click', () => {
+    modalModifier.classList.add('active');
+    document.body.style.overflow = 'hidden';
+});
+
+// Fermer la modal
+function closeModal() {
+    modalModifier.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    alertsContainer.innerHTML = '';
+}
+
+btnCloseModal.addEventListener('click', closeModal);
+btnCancelModifier.addEventListener('click', closeModal);
+
+// Fermer en cliquant en dehors
+modalModifier.addEventListener('click', (e) => {
+    if (e.target === modalModifier) {
+        closeModal();
+    }
+});
+
+// Fermer avec Echap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalModifier.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// ==================== SOUMISSION FORMULAIRE ==================== 
+
+formModifier.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Récupérer les données
+    const nom = document.getElementById('modifier-nom').value.trim();
+    const prenom = document.getElementById('modifier-prenom').value.trim();
+    const email = document.getElementById('modifier-email').value.trim();
+    const telephone = document.getElementById('modifier-telephone').value.trim();
+
+    // Validation basique côté client
+    if (!nom || !prenom || !email || !telephone) {
+        showAlert('❌ Tous les champs sont obligatoires', 'error');
+        return;
+    }
+
+    if (nom.length < 3 || prenom.length < 3) {
+        showAlert('❌ Le nom et prénom doivent avoir au moins 3 caractères', 'error');
+        return;
+    }
+
+    if (nom.length > 30 || prenom.length > 30) {
+        showAlert('❌ Le nom et prénom ne doivent pas dépasser 30 caractères', 'error');
+        return;
+    }
+
+    // Validation email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showAlert('❌ Format d\'email invalide', 'error');
+        return;
+    }
+
+    // Validation téléphone (format Maroc)
+    const phoneRegex = /^(\+212|0)[67]\d{8}$/;
+    const cleanPhone = telephone.replace(/\s|-/g, '');
+    if (!phoneRegex.test(cleanPhone)) {
+        showAlert('❌ Format téléphone invalide (ex: +212 612345678 ou 0612345678)', 'error');
+        return;
+    }
+
+    // Envoyer au serveur
+    btnSave.classList.add('loading');
+    btnSave.disabled = true;
+
+    try {
+        
+        const formData = new FormData(formModifier); //FormData = Classe native JavaScript
+        const response = await fetch('/annonces_immobilier/Controlles/UserCtrl.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('✅ ' + result.message, 'success');
+            
+            // Rafraîchir la page après 2 secondes
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            const errorMsg = result.message || 'Une erreur est survenue';
+            showAlert('❌ ' + errorMsg, 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('❌ Erreur serveur. Veuillez réessayer.', 'error');
+    } finally {
+        btnSave.classList.remove('loading');
+        btnSave.disabled = false;
+    }
+});
+
+// ==================== FONCTION AFFICHAGE ALERTES ==================== 
+
+function showAlert(message, type) {
+    const alertClass = type === 'success' ? 'modal-alert-success' : 'modal-alert-error';
+    const alertIcon = type === 'success' ? '✓' : '!';
+
+    const alertHTML = `
+        <div class="modal-alert ${alertClass}">
+            <span class="modal-alert-icon">${alertIcon}</span>
+            <div class="modal-alert-content">
+                <p>${message}</p>
+            </div>
+        </div>
+    `;
+
+    alertsContainer.innerHTML = alertHTML;
+
+    // Auto-masquer les alertes d'erreur après 5 secondes
+    if (type === 'error') {
+        setTimeout(() => {
+            alertsContainer.innerHTML = '';
+        }, 5000);
+    }
+}
+</script>
+
+<?php include(__DIR__ . "/footer.php"); ?>
